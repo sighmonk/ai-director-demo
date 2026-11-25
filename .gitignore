@@ -23,6 +23,9 @@ packages/
 TestResults/
 *.trx
 
+# GdUnit4 test adapter generated runner
+gdunit4_testadapter*/
+
 # VS Code
 .vscode/
 
