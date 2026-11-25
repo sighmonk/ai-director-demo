@@ -117,8 +117,25 @@ jobs:
           use-dotnet: true
           include-templates: true
 
+      - name: Locate Godot
+        shell: pwsh
+        run: |
+          if ($IsWindows) {
+            $roots = @("$env:USERPROFILE\godot", "$env:GITHUB_WORKSPACE\godot")
+            $console = @($roots | ForEach-Object { Get-ChildItem $_ -Filter '*_console.exe' -Recurse -ErrorAction SilentlyContinue }) | Select-Object -First 1
+            if (-not $console) { throw "Godot console executable not found" }
+            $path = $console.FullName
+          } else {
+            $path = (Get-Command godot).Source
+          }
+          "GODOT_BIN=$path" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          & $path --version
+
       - name: Import Godot project
-        run: godot --headless --path . --import
+        shell: pwsh
+        run: |
+          & $env:GODOT_BIN --headless --path . --import
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Prepare export directory
         shell: pwsh
@@ -130,7 +147,10 @@ jobs:
           New-Item -ItemType Directory -Force -Path $parent | Out-Null
 
       - name: Export release build
-        run: godot --headless --path . --export-release "${{ matrix.preset }}" "${{ matrix.output }}"
+        shell: pwsh
+        run: |
+          & $env:GODOT_BIN --headless --path . --export-release "${{ matrix.preset }}" "${{ matrix.output }}"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Ad-hoc sign macOS app
         if: matrix.platform == 'macos'
