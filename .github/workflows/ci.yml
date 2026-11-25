@@ -1,0 +1,187 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  GODOT_VERSION: "4.7.2"
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: true
+          include-templates: false
+
+      - name: Locate Godot
+        run: |
+          echo "GODOT_BIN=$(command -v godot)" >> "$GITHUB_ENV"
+          godot --version
+          dotnet --version
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore "project kitchen.sln"
+
+      - name: Import Godot project
+        run: godot --headless --path . --import
+
+      - name: Build
+        run: dotnet build "project kitchen.sln" -c Debug --no-restore
+
+      - name: Test
+        run: dotnet test "project kitchen.sln" -c Debug --no-build --settings .github/ci.runsettings
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: .github/TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 14
+
+  export:
+    name: Export (${{ matrix.platform }})
+    needs: build-test
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows
+            os: windows-latest
+            preset: Windows Desktop
+            output: Builds/windows/AIDirector.exe
+            artifact: ai-director-windows-x86_64
+          - platform: linux
+            os: ubuntu-latest
+            preset: Linux
+            output: Builds/linux/AIDirector.x86_64
+            artifact: ai-director-linux-x86_64
+          - platform: macos
+            os: macos-latest
+            preset: macOS
+            output: Builds/macos/AI Director Demo.app
+            artifact: ai-director-macos-universal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: true
+          include-templates: true
+
+      - name: Import Godot project
+        run: godot --headless --path . --import
+
+      - name: Prepare export directory
+        shell: pwsh
+        run: |
+          $output = "${{ matrix.output }}"
+          $parent = Split-Path $output
+          if (Test-Path $output) { Remove-Item -Recurse -Force $output }
+          if (Test-Path $parent) { Remove-Item -Recurse -Force $parent }
+          New-Item -ItemType Directory -Force -Path $parent | Out-Null
+
+      - name: Export release build
+        run: godot --headless --path . --export-release "${{ matrix.preset }}" "${{ matrix.output }}"
+
+      - name: Ad-hoc sign macOS app
+        if: matrix.platform == 'macos'
+        run: codesign --force --deep --sign - "Builds/macos/AI Director Demo.app"
+
+      - name: Package Windows artifact
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "Builds/windows/*" -DestinationPath "Builds/${{ matrix.artifact }}.zip" -Force
+
+      - name: Package Linux artifact
+        if: matrix.platform == 'linux'
+        shell: bash
+        run: |
+          cd Builds/linux
+          zip -r "../${{ matrix.artifact }}.zip" .
+
+      - name: Package macOS artifact
+        if: matrix.platform == 'macos'
+        shell: bash
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent "Builds/macos/AI Director Demo.app" "Builds/${{ matrix.artifact }}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: Builds/${{ matrix.artifact }}.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: export
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/*.zip \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes
