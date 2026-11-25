@@ -24,7 +24,9 @@ Full technical documentation is in [Docs/](Docs/README.md):
 
 ## Builds
 
-Every push to `main` exports Windows, Linux and macOS builds as GitHub Actions artifacts. Pushing a `v*` tag publishes the same artifacts as a GitHub Release. See [Docs/ci-cd.md](Docs/ci-cd.md).
+Every push to `main` publishes a **prerelease build** with Windows, Linux and macOS zips and a
+generated changelog. Pushing a `v*` tag publishes a stable GitHub Release with the same artifacts.
+See [Docs/ci-cd.md](Docs/ci-cd.md).
 
 ## Gameplay
 

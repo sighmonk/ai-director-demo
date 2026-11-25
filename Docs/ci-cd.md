@@ -7,8 +7,8 @@ All automation lives in `.github/workflows/ci.yml`.
 | Event | What runs |
 | --- | --- |
 | `pull_request` → `main` | Build & Test, then the three export jobs |
-| `push` → `main` | Build & Test, three export jobs, artifacts uploaded |
-| `push` tag `v*` | Build & Test, three export jobs, GitHub Release |
+| `push` → `main` | Build & Test, three export jobs, workflow artifacts and a build prerelease |
+| `push` tag `v*` | Build & Test, three export jobs and a stable GitHub Release |
 | `workflow_dispatch` | Manual run of all jobs (release skipped) |
 
 Concurrency cancels superseded runs on the same branch, but not on tags.
@@ -67,28 +67,42 @@ notes. The job has `contents: write`; every other job is read-only.
 No approval is required and Copilot review is not requested. Administrators may bypass protection
 for emergency fixes (`enforce_admins: false`).
 
-## Artifacts
-
-Download from the Actions run page or with the CLI:
-
-```powershell
-gh run list --branch main --limit 1
-gh run download <run-id> -n ai-director-windows-x86_64
-```
-
-The exported bundles include the .NET runtime configuration and the game assemblies. Because the
-tests live in the same project as the game, test-related assemblies are currently published too;
-splitting the test project is a possible future optimisation.
-
 ## Releases
+
+Every push to `main` publishes a **prerelease build**:
+
+- tag `build-<run>-<attempt>`, created at the pushed commit,
+- title `Build <run>.<attempt> (<short sha>)`,
+- the three platform zips,
+- automatically generated notes since the previous **stable** release.
+
+Version tags publish a stable release:
 
 ```powershell
 git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The tag triggers the full pipeline and publishes the three zips as a GitHub Release. Delete a test
-tag/release only after confirming it was created by this workflow.
+The tag triggers the full pipeline and creates a stable GitHub Release with the same three zips
+and generated notes since the previous stable release. Build prereleases are excluded when
+choosing the changelog start point, so a stable release covers all changes since the last version.
+
+The release job is the only job with `contents: write`. It uses the short-lived `GITHUB_TOKEN`.
+Do not delete build tags or releases manually unless you are cleaning up a failed run.
+
+## Artifacts
+
+Every run still uploads workflow artifacts for debugging. Releases are the primary distribution
+channel. Download a release asset from the Releases page or with the CLI:
+
+```powershell
+gh release list --limit 5
+gh release download <tag> --pattern "ai-director-*.zip"
+```
+
+The exported bundles include the .NET runtime configuration and the game assemblies. Because the
+tests live in the same project as the game, test-related assemblies are currently published too;
+splitting the test project is a possible future optimisation.
 
 ## Local reproduction
 

@@ -29,7 +29,7 @@ gameplay interventions in real time.
 | Runtime | .NET 8, C# 12 |
 | Test framework | GdUnit4 5.1.0-rc7 (API), 3.2.0 (adapter), 1.1.0 (analyzers) |
 | Unit tests | 83 tests in `Tests/AIDirector` |
-| CI | Build + tests on pull requests; Windows/Linux/macOS exports on `main`; releases on `v*` tags |
+| CI | Build + tests on pull requests; Windows/Linux/macOS exports and build prereleases on `main`; stable releases on `v*` tags |
 | Main scene | `res://Src/Level/Level.tscn` |
 
 ## Quick start
