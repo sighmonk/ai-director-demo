@@ -74,6 +74,43 @@ optional and completely local:
 
 A clean checkout without the plugin still builds, tests and exports normally.
 
+## Godot-MCP server recovery
+
+The Godot-MCP addon downloads its local server binary into
+`.godot/mcp-server/<rid>/gamedev-mcp-server(.exe)`. Deleting `.godot/` — for example after a Godot
+upgrade — also removes that cache. The MCP endpoint then fails because nothing listens on
+`localhost:29302`.
+
+Recovery:
+
+1. Open the project in the Godot editor.
+2. Open the **Godot-MCP** dock and press **Start** for the local server.
+3. The addon downloads the pinned `gamedev-mcp-server` release into `.godot/mcp-server/<rid>/`.
+4. Wait until the dock reports the server as running.
+5. Verify the port:
+
+   ```powershell
+   Get-NetTCPConnection -LocalPort 29302 -State Listen
+   Test-NetConnection 127.0.0.1 -Port 29302 -InformationLevel Quiet
+   ```
+
+6. Reload the MCP server in VS Code (or restart the MCP client).
+
+Alternative: start the Godot editor with `GODOT_MCP_START_SERVER=1` in **Custom** mode and the
+addon will start the server on boot.
+
+Diagnostics:
+
+- `.env` must contain `GODOT_MCP_CONNECTION_MODE=Custom`, `GODOT_MCP_HOST=http://localhost:29302`
+  and a token.
+- `.vscode/mcp.json` must use the URL and bearer token shown in the addon dock.
+- If the download fails, check GitHub reachability; the server version is pinned by the addon
+  (`GodotMcpServerView.ServerVersion`).
+- VS Code reports a failed MCP connection when the port is closed; start the server first and
+  reload the client.
+
+Both `.env` and `.vscode/mcp.json` are local-only and must never be committed.
+
 ## Secrets policy
 
 - Tokens, keys and passwords never belong in tracked files or commit messages.
