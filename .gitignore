@@ -26,8 +26,9 @@ TestResults/
 # GdUnit4 test adapter generated runner
 gdunit4_testadapter*/
 
-# VS Code
-.vscode/
+# VS Code (local settings; keep the example config tracked)
+.vscode/*
+!.vscode/mcp.example.json
 
 # JetBrains Rider
 .idea/
@@ -46,3 +47,16 @@ gdunit4_testadapter*/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local environment and AI tooling (never commit secrets)
+.env
+.env.*
+!.env.example
+addons/godot_mcp/
+.ai-game-dev/
+.mcp.json
+Directory.Build.props
+*.csproj.old*
+
+# Private agent instructions (kept local by design)
+.github/copilot-instructions.md
