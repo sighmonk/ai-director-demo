@@ -25,7 +25,6 @@ GameManager="*res://Src/Managers/GameManager.tscn"
 [dotnet]
 
 project/assembly_name="project kitchen"
-
 [global_group]
 
 PlayerBullet=""
