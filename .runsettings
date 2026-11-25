@@ -32,16 +32,16 @@
     </LoggerRunSettings>
 
     <GdUnit4>
-        <!-- Dodatkowe parametry Godot -->
+        <!-- Additional Godot parameters -->
         <Parameters>"--verbose"</Parameters>
         
-        <!-- Format nazw testów -->
+        <!-- Test name format -->
         <DisplayName>FullyQualifiedName</DisplayName>
         
-        <!-- Przechwytuj stdout -->
+        <!-- Capture stdout -->
         <CaptureStdOut>true</CaptureStdOut>
         
-        <!-- Timeout kompilacji (ms) -->
+        <!-- Compilation timeout (ms) -->
         <CompileProcessTimeout>30000</CompileProcessTimeout>
     </GdUnit4>
 </RunSettings>
