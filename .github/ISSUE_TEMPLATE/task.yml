@@ -1,0 +1,36 @@
+name: Maintenance task
+description: Tooling, refactor, documentation or CI work.
+title: "[Task]: "
+labels: ["chore"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be true when this task is finished?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      placeholder: |
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Commands, checks or manual steps that prove the task is complete.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: The work stays out of `main` until the PR checks are green.
+          required: true
+        - label: No secrets or local-only files will be committed.
+          required: true

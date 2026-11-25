@@ -1,5 +1,7 @@
 # AI Director Demo Game
 
+[![CI](https://github.com/sighmonk/ai-director-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/sighmonk/ai-director-demo/actions/workflows/ci.yml)
+
 A **2D top-down shooter** with a custom **AI Director** system that dynamically adjusts difficulty in real time. Built in **Godot 4.7.2** with **C# (.NET 8.0)**.
 
 ## About
@@ -7,6 +9,22 @@ A **2D top-down shooter** with a custom **AI Director** system that dynamically 
 This game was created as part of a **Bachelor's Engineering Thesis** at Nicolaus Copernicus University in Toruń. The goal of the project is to design and implement a system that uses artificial intelligence to dynamically adjust the difficulty level of a game in real time, keeping the player in an optimal engagement state known as **Flow** — a concept from Csíkszentmihályi's psychology research describing the zone between boredom (too easy) and frustration (too hard).
 
 The project demonstrates that automated, real-time adaptation of gameplay parameters based on player performance is a viable approach to maintaining engagement, potentially outperforming static difficulty settings.
+
+## Documentation
+
+Full technical documentation is in [Docs/](Docs/README.md):
+
+- [Architecture](Docs/architecture.md)
+- [AI Director](Docs/ai-director.md)
+- [Dungeon generation](Docs/dungeon-generation.md)
+- [Testing](Docs/testing.md)
+- [Development](Docs/development.md)
+- [CI/CD](Docs/ci-cd.md)
+- [Agent and contribution workflow](Docs/agent-workflow.md)
+
+## Builds
+
+Every push to `main` exports Windows, Linux and macOS builds as GitHub Actions artifacts. Pushing a `v*` tag publishes the same artifacts as a GitHub Release. See [Docs/ci-cd.md](Docs/ci-cd.md).
 
 ## Gameplay
 
@@ -121,9 +139,13 @@ Unit tests are written using **GdUnit4** and cover the AI Director subsystem:
 
 Run tests with:
 
-```bash
-dotnet test
+```powershell
+$env:GODOT_BIN = 'C:\Godot\4.7.2mono\Godot_v4.7.2-stable_mono_win64.exe'
+godot --headless --path . --import
+dotnet test "project kitchen.sln" --settings .runsettings
 ```
+
+See [Docs/testing.md](Docs/testing.md) for the full suite map and troubleshooting.
 
 ## Project Structure
 
