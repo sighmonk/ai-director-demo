@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/sighmonk/ai-director-demo/tree/main/Docs
+    about: Architecture, AI Director, dungeon generation, testing, development and CI.
+  - name: CI runs
+    url: https://github.com/sighmonk/ai-director-demo/actions/workflows/ci.yml
+    about: Check build, test and export results.

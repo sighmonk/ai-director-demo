@@ -1,0 +1,46 @@
+name: Bug report
+description: Something behaves incorrectly in the game, tooling or CI.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Do not paste tokens, `.env` contents or local-only paths.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the current behaviour and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Run ...
+        2. Do ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: godot
+    attributes:
+      label: Godot version
+      placeholder: 4.7.2 .NET
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Remove tokens, secrets and absolute local paths before pasting.
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I removed secrets and local-only paths from logs and screenshots.
+          required: true
+        - label: I searched existing issues and pull requests.
+          required: true
