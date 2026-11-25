@@ -33,6 +33,26 @@ ci/71-export-cache
 
 Do not push directly to `main`; branch protection rejects it.
 
+## Language
+
+All issues, pull requests, commit messages, README content, tracked documentation and code
+comments in this repository are written in **English**. The master's thesis in
+`sighmonk/praca-magisterska` stays in Polish; its GitHub issues are English.
+
+## Godot-owned files — editor only
+
+Never edit Godot-owned files with a text editor, script or agent tool. This includes:
+
+- scenes and resources: `*.tscn`, `*.tres`,
+- project and export configuration: `project.godot`, `*.cfg` (including `export_presets.cfg`),
+- import metadata: `*.import`,
+- editor state and caches: `.godot/` and everything inside it.
+
+Make these changes through the Godot editor, using the Godot-MCP editor tools when they are
+available. If MCP is unavailable, do **not** edit the file: give the user exact step-by-step
+instructions for the editor instead. A direct text edit can corrupt scene UIDs, resource
+references, import settings or the export configuration.
+
 ## 3. Make the change
 
 - Keep the change focused on the issue.
