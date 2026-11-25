@@ -1,6 +1,6 @@
 # AI Director Demo Game
 
-A **2D top-down shooter** with a custom **AI Director** system that dynamically adjusts difficulty in real time. Built in **Godot 4.4** with **C# (.NET 8.0)**.
+A **2D top-down shooter** with a custom **AI Director** system that dynamically adjusts difficulty in real time. Built in **Godot 4.7.2** with **C# (.NET 8.0)**.
 
 ## About
 
@@ -100,10 +100,10 @@ Supports seeded RNG for reproducible layouts and optional step-by-step visualiza
 
 | Technology | Version | Purpose |
 |---|---|---|
-| Godot Engine | 4.4.1 (.NET) | Game engine |
+| Godot Engine | 4.7.2 (.NET) | Game engine |
 | .NET | 8.0 | Runtime |
 | C# | 12.0 | Language |
-| GdUnit4 | 5.0.0 | Unit testing framework |
+| GdUnit4 | 5.1.0-rc7 | Unit testing framework |
 
 ## Testing
 
