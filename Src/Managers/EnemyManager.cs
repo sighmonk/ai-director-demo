@@ -104,6 +104,78 @@ public partial class EnemyManager : Node
         GD.Print("[EnemyManager] WorldTileMap and coords set.");
     }
 
+    public IReadOnlyList<Enemy> ActiveEnemies => _activeEnemies;
+
+    /// <summary>Tile edge length in pixels, or 0 when no tilemap is assigned yet.</summary>
+    public int TileSize
+    {
+        get
+        {
+            if (_worldTileMap?.TileSet == null) return 0;
+            return _worldTileMap.TileSet.TileSize.X;
+        }
+    }
+
+    public Vector2I WorldToCell(Vector2 globalPosition)
+    {
+        if (_worldTileMap == null) return Vector2I.Zero;
+        return _worldTileMap.LocalToMap(_worldTileMap.ToLocal(globalPosition));
+    }
+
+    public Vector2 CellCenterGlobal(Vector2I cell)
+    {
+        if (_worldTileMap == null) return Vector2.Zero;
+        return _worldTileMap.ToGlobal(_worldTileMap.MapToLocal(cell));
+    }
+
+    /// <summary>True when the cell holds the floor atlas tile.</summary>
+    public bool IsFloorCell(Vector2I cell)
+    {
+        if (_worldTileMap == null) return false;
+        if (_worldTileMap.GetCellSourceId(cell) == -1) return false;
+        return _worldTileMap.GetCellAtlasCoords(cell) == _floorAtlasCoord;
+    }
+
+    public bool IsFloorTile(Vector2 globalPosition) => IsFloorCell(WorldToCell(globalPosition));
+
+    /// <summary>True when the A* grid has a path between the two world positions.</summary>
+    public bool IsFloorReachable(Vector2 from, Vector2 to)
+    {
+        if (_astar == null || _worldTileMap == null) return false;
+
+        Vector2I startCell = WorldToCell(from);
+        Vector2I endCell = WorldToCell(to);
+
+        if (!_astar.IsInBoundsv(startCell) || !_astar.IsInBoundsv(endCell)) return false;
+        if (_astar.IsPointSolid(startCell) || _astar.IsPointSolid(endCell)) return false;
+
+        return _astar.GetIdPath(startCell, endCell).Count > 0;
+    }
+
+    /// <summary>
+    /// Samples random cells around <paramref name="globalPosition"/> until one holds a floor tile.
+    /// </summary>
+    public bool TryGetRandomFloorTileNear(Vector2 globalPosition, float radiusPixels, out Vector2I cell)
+    {
+        cell = default;
+        if (_worldTileMap == null) return false;
+
+        for (int attempt = 0; attempt < 20; attempt++)
+        {
+            Vector2 offset = new Vector2(
+                _rng.RandfRange(-radiusPixels, radiusPixels),
+                _rng.RandfRange(-radiusPixels, radiusPixels));
+
+            Vector2I candidate = WorldToCell(globalPosition + offset);
+            if (!IsFloorCell(candidate)) continue;
+
+            cell = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
     private void InitializeAStar()
     {
         if (_worldTileMap == null || _worldTileMap.TileSet == null) return;

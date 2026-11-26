@@ -2,7 +2,7 @@
 
 ## Runtime overview
 
-The game boots the `Level` scene declared in `project.godot` and relies on four autoload
+The game boots the `Level` scene declared in `project.godot` and relies on five autoload
 singletons for cross-cutting state. The level then spawns the dungeon, the AI Director and the
 debug UI.
 
@@ -13,6 +13,7 @@ flowchart TD
         SM[SignalManager]
         EM[EnemyManager]
         GM[GameManager]
+        PM[PickupManager]
     end
 
     subgraph Level[Level.tscn]
@@ -27,27 +28,32 @@ flowchart TD
     DG -->|DungeonGenerationCompleted| GM
     DG --> EM
     GM --> P
+    PM -->|spawns| HP[HealthPacks]
+    P -->|pickup| HP
     DIR --> DSm[DifficultyStateMachine]
     DSm --> A[DirectorAction nodes]
     A --> EM
+    A --> PM
     P --> SM
     E --> SM
+    HP --> SM
     SM --> DM
     DM --> DIR
 ```
 
 The autoloads are registered in this order in `project.godot`: `DataManager`, `SignalManager`,
-`EnemyManager`, `GameManager`. Keep that in mind when changing initialization code that reaches
-for another singleton.
+`EnemyManager`, `GameManager`, `PickupManager`. Keep that in mind when changing initialization code
+that reaches for another singleton.
 
 ### Managers
 
 | Manager | Responsibilities | Key API |
 | --- | --- | --- |
-| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `PerformanceMetricsUpdated`, … |
+| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `HealthPackSpawned`, `HealthPackCollected`, `PerformanceMetricsUpdated`, … |
 | `DataManager` | Subscribes to gameplay signals, owns `DirectorData`, syncs player health, tracks spawned/living difficulty value. | `RegisterDirectorData`, `RegisterPlayer`, `RegisterEnemySpawn`, `RegisterEnemyDeath` |
-| `EnemyManager` | Spawns enemies on a timer, keeps the active enemy list, builds an `AStarGrid2D` from the world tilemap and applies Director buffs/debuffs or spawn-rate changes. | `SetWorldTileMap`, `GetPath`, `ModifySpawnRate`, `BuffAllEnemies`, `DebuffAllEnemies`, `ForceSpawnEnemy` |
+| `EnemyManager` | Spawns enemies on a timer, keeps the active enemy list, builds an `AStarGrid2D` from the world tilemap, answers floor/reachability queries and applies Director buffs/debuffs or spawn-rate changes. | `SetWorldTileMap`, `GetPath`, `IsFloorTile`, `IsFloorReachable`, `TryGetRandomFloorTileNear`, `ModifySpawnRate`, `BuffAllEnemies`, `DebuffAllEnemies`, `ForceSpawnEnemy`, `ActiveEnemies` |
 | `GameManager` | Session clock, session progress, current difficulty from `DifficultyCurve`, player registration and debug toggles. | `SessionTime`, `SessionProgress`, `CurrentDifficulty`, `RegisterPlayer` |
+| `PickupManager` | Ambient health pack spawning, the active-pack cap and a direct spawn entry point for Director actions. Placement only uses floor tiles reachable from the player. | `TrySpawnNearPlayer`, `SpawnHealthPackAt`, `ActiveCount`, `MaxActiveHealthPacks` |
 
 ### Signal flow
 
@@ -100,6 +106,7 @@ sequenceDiagram
 | `HealthComponent` | `Node2D` | HP, health bar, optional invincibility frames, `HealthChanged` and `Died` signals. |
 | `HitboxComponent` | `Area2D` | Small bridge that forwards `Damage()` calls to a `HealthComponent`. |
 | `PlayerBullet` | `Area2D` | Directional projectile with lifespan, pierce counter and tile collision cleanup. |
+| `HealthPack` | `Area2D` | Group `HealthPickups`: heals the player once through `HealthComponent.Heal`, then plays a short scale/fade effect and frees itself. Enemies cannot pick it up. |
 | `PlayerCamera` | `Camera2D` | Free-look camera with scroll-wheel zoom. |
 | `DebugUi` | `CanvasLayer` | Renders Director state, Cp/Ep/ratio, points, spawn rate and recent actions. |
 
@@ -125,11 +132,13 @@ Src/
 ├── Dungeon/         Generation pipeline and tile rendering
 ├── Enemies/         Enemy base class and EnemyRed implementation
 ├── Level/           Level scene orchestration
-├── Managers/        Signal, Data, Enemy and Game managers
+├── Managers/        Signal, Data, Enemy, Pickup and Game managers
+├── Pickups/         Health pack entity, placement rules and spawn scheduler
 ├── Player/          Player controller
 ├── Projectiles/     PlayerBullet
 └── UI/              Camera and debug overlay
-Tests/AIDirector/    GdUnit4 test suites
+Tests/AIDirector/    GdUnit4 test suites for the Director
+Tests/Gameplay/      GdUnit4 test suites for gameplay systems
 ```
 
 ## Runtime caveats

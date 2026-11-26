@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dmllu5s5bjh4e"]
+
+[ext_resource type="Script" uid="uid://byiqx04rpvbr5" path="res://Src/Managers/PickupManager.cs" id="1_00i7d"]
+[ext_resource type="PackedScene" uid="uid://buc68xg7hovan" path="res://Src/Pickups/HealthPack.tscn" id="2_uahy8"]
+
+[node name="PickupManager" type="Node" unique_id=155975825]
+script = ExtResource("1_00i7d")
+HealthPackScene = ExtResource("2_uahy8")
