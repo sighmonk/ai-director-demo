@@ -176,6 +176,11 @@ public partial class EnemyManager : Node
         return false;
     }
 
+    /// <summary>
+    /// Rebuilds the A* grid from the current world tilemap. Call after the dungeon geometry changed.
+    /// </summary>
+    public void RebuildNavigation() => InitializeAStar();
+
     private void InitializeAStar()
     {
         if (_worldTileMap == null || _worldTileMap.TileSet == null) return;

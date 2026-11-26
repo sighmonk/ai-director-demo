@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **120 tests**.
+All tests live in `Tests/` and total **146 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -47,6 +47,9 @@ All tests live in `Tests/` and total **120 tests**.
 | `HealthPackPlacementTest` | 9 | Distance ring edges, player-cell exclusion, candidate filtering, seeded selection |
 | `AutoSpawnSchedulerTest` | 5 | Active-pack cap, spawn interval, first-spawn delay |
 | `HealthPackPickupTest` | 3 | Runtime pickup heals once, clamps at max HP, never damages the player |
+| `DungeonTopologyTest` | 13 | Reachability, bridges, corridor cross-sections, closability |
+| `DungeonWorldModelTest` | 12 | Room creation rejection paths, passage close/reopen, rollback, determinism |
+| `DungeonMutatorWiringTest` | 1 | Mutator node present in the dungeon scene |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather
 than exact draws, so they remain deterministic enough for CI.

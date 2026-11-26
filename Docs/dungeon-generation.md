@@ -96,6 +96,43 @@ Exported on `DungeonGenerator`:
 `Level.tscn` overrides the scene defaults with `Seed = 111111` and
 `EnableVisualization = false`.
 
+## Runtime mutation
+
+`DungeonMutator` (child `Mutator` of `DungeonGenerator`) exposes the runtime API used by Director
+actions. It delegates all decisions to the scene-free `DungeonWorldModel`, so mutations can be
+tested without a scene.
+
+| API | Behaviour |
+| --- | --- |
+| `DungeonGenerator.Rooms` / `RoomCenters` / `CorridorEdges` | Read-only view of the generated dungeon; room geometry uses pixel coordinates, like the rest of the pipeline |
+| `DungeonGenerator.GetFloorTiles()` | Current floor tiles from the collision tilemap |
+| `DungeonGenerator.GetRoomTileRects()` / `GetRoomTileCenters()` | Main rooms in tile coordinates (corridor cells excluded), used by the mutator |
+| `DungeonGenerator.RegisterRuntimeRoom(rect, center)` | Keeps the read-only view in sync after a runtime room is created |
+| `DungeonTopology.ReachableFrom` / `AreAllReachable` | Four-way BFS over floor tiles |
+| `DungeonTopology.FindBridges` | Tile-graph bridges (iterative Tarjan), deterministic |
+| `DungeonTopology.FindPassages` | Corridor cross-sections of at most 3 tiles, excluding room interiors |
+| `DungeonTopology.IsClosable` | Simulates a closure and checks every room centre plus the reference cell |
+| `DungeonWorldModel.TryCreateRoom(area, openingSide)` | Validates bounds, overlap and occupied cells, carves the room and one tunnel, verifies reachability, rolls back on failure. The accepted room is reported through `LastCreatedRoom` / `LastCreatedRoomCenter` |
+| `DungeonWorldModel.TryClosePassage(tiles)` | Replaces the cross-section with walls only when the dungeon stays connected; the model is unchanged otherwise |
+| `DungeonWorldModel.RestoreFloors(tiles)` | Restores the exact tiles of a closed passage |
+| `DungeonMutator.GetClosablePassages()` | Passages that can be closed right now |
+
+Mutation rules:
+
+- The room floor area must stay at least one tile inside the dungeon bounding box so the perimeter
+  walls exist; rooms smaller than 3 × 3 tiles are rejected.
+- Any floor tile or entity cell (player, living enemies) inside the target area rejects the
+  mutation. Cells are sampled from `GameManager.Player` and `EnemyManager.ActiveEnemies` before any
+  tile is written.
+- A passage is never closed when it covers the player cell or a room centre, or when the remaining
+  floors would no longer connect every room centre. The check runs before the first write, so a
+  rejected mutation leaves both tilemaps and the A* grid untouched.
+- After a successful mutation the mutator repaints `WorldTileMap` (new floor tiles get wall
+  neighbours), refreshes `DisplayTileMap` through `TilePlacer.UpdateDisplayTiles`, calls
+  `EnemyManager.RebuildNavigation()` and emits `SignalManager.DungeonChanged`.
+- The model is deterministic: tile iteration is sorted, so a fixed layout always produces the same
+  passages and bridges.
+
 ## Visualisation
 
 `GeneratorVisualizer` draws coloured overlays for cells, selected rooms, Delaunay edges, the MST,

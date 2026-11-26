@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://btrd82av6j5pk"]
+[gd_scene format=3 uid="uid://btrd82av6j5pk"]
 
 [ext_resource type="Script" uid="uid://dh0cisaqevjns" path="res://Src/Dungeon/DungeonGenerator.cs" id="1_s7lx6"]
 [ext_resource type="Script" uid="uid://canmv5ssx6gp5" path="res://Src/Dungeon/RoomGenerator.cs" id="2_xht7t"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dkwpqn62bcr1y" path="res://Assets/Sprites/WorldTileSet.png" id="10_t4n6m"]
 [ext_resource type="Texture2D" uid="uid://bjs8qfmk30hk1" path="res://Assets/Sprites/DisplayTileSet.png" id="11_ed0ct"]
 [ext_resource type="Script" uid="uid://b85vmp2qkn3q1" path="res://Src/Dungeon/DungeonRenderer.cs" id="12_ed0ct"]
+[ext_resource type="Script" uid="uid://dcoo112tv5ob3" path="res://Src/Dungeon/DungeonMutator.cs" id="13_pe8ga"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qeo6l"]
 texture = ExtResource("10_t4n6m")
@@ -45,42 +46,45 @@ texture = ExtResource("11_ed0ct")
 [sub_resource type="TileSet" id="TileSet_14qoo"]
 sources/0 = SubResource("TileSetAtlasSource_frg7a")
 
-[node name="DungeonGenerator" type="Node2D" node_paths=PackedStringArray("WorldTileMap", "DisplayTileMap")]
+[node name="DungeonGenerator" type="Node2D" unique_id=1158681500 node_paths=PackedStringArray("WorldTileMap", "DisplayTileMap")]
 script = ExtResource("1_s7lx6")
 WorldTileMap = NodePath("WorldTileMap")
 DisplayTileMap = NodePath("DisplayTileMap")
 metadata/_edit_horizontal_guides_ = [-40.0]
 
-[node name="RoomGenerator" type="Node2D" parent="."]
+[node name="RoomGenerator" type="Node2D" parent="." unique_id=1020042576]
 script = ExtResource("2_xht7t")
 
-[node name="RoomSeparator" type="Node2D" parent="."]
+[node name="RoomSeparator" type="Node2D" parent="." unique_id=2004078532]
 script = ExtResource("3_4l1b3")
 
-[node name="MainRoomDeterminator" type="Node2D" parent="."]
+[node name="MainRoomDeterminator" type="Node2D" parent="." unique_id=227061432]
 script = ExtResource("4_t4n6m")
 
-[node name="GraphGenerator" type="Node2D" parent="."]
+[node name="GraphGenerator" type="Node2D" parent="." unique_id=1848566853]
 script = ExtResource("5_ed0ct")
 
-[node name="HallwayGenerator" type="Node2D" parent="."]
+[node name="HallwayGenerator" type="Node2D" parent="." unique_id=1571220254]
 script = ExtResource("6_qeo6l")
 
-[node name="ExtraRoomDeterminator" type="Node2D" parent="."]
+[node name="ExtraRoomDeterminator" type="Node2D" parent="." unique_id=301984787]
 script = ExtResource("7_xht7t")
 
-[node name="GeneratorVisualizer" type="Node2D" parent="."]
+[node name="GeneratorVisualizer" type="Node2D" parent="." unique_id=1349273771]
 script = ExtResource("7_frg7a")
 
-[node name="DungeonRenderer" type="Node2D" parent="."]
+[node name="DungeonRenderer" type="Node2D" parent="." unique_id=1366666295]
 script = ExtResource("12_ed0ct")
 
-[node name="TilePlacer" type="Node2D" parent="."]
+[node name="TilePlacer" type="Node2D" parent="." unique_id=1839088904]
 script = ExtResource("9_t4n6m")
 
-[node name="WorldTileMap" type="TileMapLayer" parent="."]
+[node name="WorldTileMap" type="TileMapLayer" parent="." unique_id=2113811162]
 tile_set = SubResource("TileSet_4l1b3")
 
-[node name="DisplayTileMap" type="TileMapLayer" parent="."]
+[node name="DisplayTileMap" type="TileMapLayer" parent="." unique_id=2118195017]
 position = Vector2(-8, -8)
 tile_set = SubResource("TileSet_14qoo")
+
+[node name="Mutator" type="Node2D" parent="." unique_id=571423493]
+script = ExtResource("13_pe8ga")
