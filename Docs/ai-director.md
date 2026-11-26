@@ -88,9 +88,26 @@ The multiplier depends on the distance from the Flow zone:
 - `1` exactly at the threshold (0.8 or 1.2),
 - up to `MaxPointsMultiplier` (default `4`) at the extremes (ratio 0 or 2.0+).
 
-Eligible actions are filtered by action type, cost and cooldown, then selected with a weighted
-random draw. A successful action spends its cost; actions can fire repeatedly while points and
-cooldowns allow it.
+Eligible actions are filtered by action type, cost and cooldown, then handed to the active
+`IActionPolicy` (`Director.Policy`). The default `RulePolicy` performs a weighted random draw. A
+successful action spends its cost; actions can fire repeatedly while points and cooldowns allow it.
+
+## Action policies
+
+Action selection is a strategy so the master's thesis experiment can swap policy arms while the
+state machine, filtering and points economy stay identical:
+
+| Type | Responsibility |
+| --- | --- |
+| `ActionSelectionContext` | Immutable snapshot: eligible candidates, action type, available points, current time, state name |
+| `IActionPolicy` | `SelectAction(context)` returns the action to execute, or `null` to do nothing |
+| `RulePolicy` | Baseline: weighted random draw over positive weights; zero/negative weights are never selected |
+
+`Director` filters candidates by type, cost and `CanExecute` before calling the policy, so a policy
+never has to re-implement eligibility rules. `Director.Policy` is assigned in `_Ready` when it has
+not been set already; `Director.SelectionSeed` (`0` = global RNG) makes the `RulePolicy` draw
+reproducible for fixed-seed experiment runs. State and action-type filtering stay in the Director,
+which keeps arm A behaviour unchanged.
 
 ## Director actions
 
@@ -128,6 +145,7 @@ All parameters below are exported on `Director` and can be changed in the inspec
 | `BasePointsPerSecond` | 1.0 | Points at the threshold edge |
 | `MaxPointsMultiplier` | 4.0 | Points multiplier at the extremes |
 | `RatioSmoothingFactor` | 0.1 | Exponential smoothing factor |
+| `SelectionSeed` | 0 | Seed for the rule policy's random source; `0` uses the global RNG |
 
 ## Observation and debugging
 

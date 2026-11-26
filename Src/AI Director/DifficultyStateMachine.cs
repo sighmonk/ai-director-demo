@@ -11,6 +11,9 @@ public partial class DifficultyStateMachine : Node
     [Export] private DirectorState[] _stateNodes;
     private Dictionary<State, DirectorState> _states = new Dictionary<State, DirectorState>();
 
+    /// <summary>State the machine is currently in; <see cref="State.Maintain"/> before the first transition.</summary>
+    public State CurrentState { get; private set; } = State.Maintain;
+
     public void Initialize(Director director, List<DirectorAction> actions)
     {
         _stateNodes = _stateNodes.ToArray();
@@ -35,6 +38,7 @@ public partial class DifficultyStateMachine : Node
 
         _currentStateNode?.Exit();
         _currentStateNode = _states[newState];
+        CurrentState = newState;
         _currentStateNode.Enter();
         
         GD.Print($"[DifficultyStateMachine] Transitioned to {newState}");
