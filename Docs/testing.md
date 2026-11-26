@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **111 tests**.
+All tests live in `Tests/` and total **120 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -39,6 +39,8 @@ All tests live in `Tests/` and total **111 tests**.
 | `FlailingDetectionTest` | 11 | HP-drop accumulation, threshold edges, healing vs. damage |
 | `DirectorPointsCalculationTest` | 19 | Points multiplier across both zones, benefit/negative spending, defaults |
 | `DirectorActionTest` | 12 | Cost, weight, cooldown and execution contract |
+| `DirectorActionExecutionTest` | 7 | Success/failure cost accounting, cooldown only on success |
+| `SpawnHealthPackActionTest` | 2 | Action scene wiring and the no-placement failure path |
 | `DifficultyStateMachineTest` | 4 | State enum completeness |
 | `ActionSelectionTest` | 8 | Type/cost/cooldown filtering, weighted selection distribution |
 | `ActionPolicyTest` | 11 | Policy selection, weight buckets, seeded replay, context snapshot |

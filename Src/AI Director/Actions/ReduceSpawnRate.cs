@@ -10,9 +10,10 @@ public partial class ReduceSpawnRate : DirectorAction
         ActionType = ActionType.Benefit;
     }
 
-    protected override void OnExecute()
+    protected override bool OnExecute()
     {
         GD.Print($"[Director] Reducing Spawn Rate! (Multiplier: {RateMultiplier}x, Cost: {Cost})");
         EnemyManager.Instance.ModifySpawnRate(RateMultiplier);
+        return true;
     }
 }

@@ -13,9 +13,10 @@ public partial class WeightedTestAction : DirectorAction
 {
     public int ExecutionCount { get; private set; } = 0;
     
-    protected override void OnExecute()
+    protected override bool OnExecute()
     {
         ExecutionCount++;
+        return true;
     }
 
     public void ResetCount() => ExecutionCount = 0;
