@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dqu10aaib1wpa"]
+[gd_scene format=3 uid="uid://dqu10aaib1wpa"]
 
 [ext_resource type="Script" uid="uid://f51mnwp02npv" path="res://Src/AI Director/Director.cs" id="1_jmqs8"]
 [ext_resource type="Script" uid="uid://x40engl8sdna" path="res://Src/AI Director/Data/DirectorData.cs" id="2_ycqpt"]
@@ -13,50 +13,54 @@
 [ext_resource type="Script" uid="uid://daqnklor6fb4n" path="res://Src/AI Director/Actions/ReduceSpawnRate.cs" id="6_icfmi"]
 [ext_resource type="Script" uid="uid://4no85cq6i7b" path="res://Src/AI Director/States/Intensify.cs" id="6_poo06"]
 [ext_resource type="Script" uid="uid://d3lm4q1t7effj" path="res://Src/AI Director/Actions/IncreaseSpawnRate.cs" id="7_ybp53"]
+[ext_resource type="Script" uid="uid://ba02l175q0u0d" path="res://Src/AI Director/Actions/SpawnHealthPack.cs" id="10_icfmi"]
 
-[node name="Director" type="Node" node_paths=PackedStringArray("Data", "StateMachine")]
+[node name="Director" type="Node" unique_id=322876743 node_paths=PackedStringArray("Data", "StateMachine")]
 script = ExtResource("1_jmqs8")
 Data = NodePath("Data")
 StateMachine = NodePath("DifficultyStateMachine")
 
-[node name="Data" type="Node" parent="." node_paths=PackedStringArray("Performance", "Player")]
+[node name="Data" type="Node" parent="." unique_id=1251329926 node_paths=PackedStringArray("Performance", "Player")]
 script = ExtResource("2_ycqpt")
 Performance = NodePath("PerformanceData")
 Player = NodePath("PlayerData")
 
-[node name="PerformanceData" type="Node" parent="Data"]
+[node name="PerformanceData" type="Node" parent="Data" unique_id=1215135040]
 script = ExtResource("3_ycqpt")
 
-[node name="PlayerData" type="Node" parent="Data"]
+[node name="PlayerData" type="Node" parent="Data" unique_id=1101937449]
 script = ExtResource("4_ycqpt")
 
-[node name="Actions" type="Node" parent="."]
+[node name="Actions" type="Node" parent="." unique_id=1967066634]
 
-[node name="SpawnHorde" type="Node" parent="Actions"]
+[node name="SpawnHorde" type="Node" parent="Actions" unique_id=1781240432]
 script = ExtResource("3_n8aoe")
 HordeSize = 20
 
-[node name="BuffEnemies" type="Node" parent="Actions"]
+[node name="BuffEnemies" type="Node" parent="Actions" unique_id=2135902414]
 script = ExtResource("4_kw4te")
 
-[node name="DebuffEnemies" type="Node" parent="Actions"]
+[node name="DebuffEnemies" type="Node" parent="Actions" unique_id=701302461]
 script = ExtResource("5_ycqpt")
 
-[node name="ReduceSpawnRate" type="Node" parent="Actions"]
+[node name="ReduceSpawnRate" type="Node" parent="Actions" unique_id=1496995322]
 script = ExtResource("6_icfmi")
 
-[node name="IncreaseSpawnRate" type="Node" parent="Actions"]
+[node name="IncreaseSpawnRate" type="Node" parent="Actions" unique_id=1696726398]
 script = ExtResource("7_ybp53")
 
-[node name="DifficultyStateMachine" type="Node" parent="." node_paths=PackedStringArray("_stateNodes")]
+[node name="SpawnHealthPack" type="Node" parent="Actions" unique_id=1736737457]
+script = ExtResource("10_icfmi")
+
+[node name="DifficultyStateMachine" type="Node" parent="." unique_id=536149054 node_paths=PackedStringArray("_stateNodes")]
 script = ExtResource("3_8u4u6")
 _stateNodes = [NodePath("Reduce"), NodePath("Maintain"), NodePath("Intensify")]
 
-[node name="Reduce" type="Node" parent="DifficultyStateMachine"]
+[node name="Reduce" type="Node" parent="DifficultyStateMachine" unique_id=1396763221]
 script = ExtResource("4_nmrdm")
 
-[node name="Maintain" type="Node" parent="DifficultyStateMachine"]
+[node name="Maintain" type="Node" parent="DifficultyStateMachine" unique_id=788033428]
 script = ExtResource("5_q4eda")
 
-[node name="Intensify" type="Node" parent="DifficultyStateMachine"]
+[node name="Intensify" type="Node" parent="DifficultyStateMachine" unique_id=1336669198]
 script = ExtResource("6_poo06")

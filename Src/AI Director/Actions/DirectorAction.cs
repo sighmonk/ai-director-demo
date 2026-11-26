@@ -22,13 +22,23 @@ public abstract partial class DirectorAction : Node
         if (currentTime < _lastUsedTime + Cooldown) return false;
         return true;
     }
-    
-    public void Execute(double currentTime)
+
+    /// <summary>
+    /// Attempts the action. The cooldown and the <c>DirectorActionExecuted</c> notification are only
+    /// applied when <see cref="OnExecute"/> reports success, so a rejected action can be retried and
+    /// never costs points.
+    /// </summary>
+    public bool Execute(double currentTime) => TryExecute(currentTime);
+
+    public bool TryExecute(double currentTime)
     {
+        if (!OnExecute()) return false;
+
         _lastUsedTime = currentTime;
         SignalManager.Instance.EmitSignal(nameof(SignalManager.DirectorActionExecuted), Name, Cost);
-        OnExecute();
+        return true;
     }
 
-    protected abstract void OnExecute();
+    /// <returns>True when the action had its effect; false leaves it ready to execute again.</returns>
+    protected abstract bool OnExecute();
 }

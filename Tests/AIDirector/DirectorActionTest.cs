@@ -12,9 +12,10 @@ public partial class TestDirectorAction : DirectorAction
     public int ExecuteCount { get; private set; } = 0;
     public double LastExecuteTime { get; private set; } = -1;
 
-    protected override void OnExecute()
+    protected override bool OnExecute()
     {
         ExecuteCount++;
+        return true;
     }
 }
 

@@ -10,9 +10,10 @@ public partial class DebuffEnemies : DirectorAction
         ActionType = ActionType.Benefit;
     }
 
-    protected override void OnExecute()
+    protected override bool OnExecute()
     {
         GD.Print($"[Director] Debuffing Enemies by {DebuffPercentage*100}%! (Cost: {Cost})");
         EnemyManager.Instance.DebuffAllEnemies(DebuffPercentage);
+        return true;
     }
 }

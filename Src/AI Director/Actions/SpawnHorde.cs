@@ -5,7 +5,7 @@ public partial class SpawnHorde : DirectorAction
 {
     [Export] public int HordeSize = 10;
 
-    protected override void OnExecute()
+    protected override bool OnExecute()
     {
         GD.Print($"[Director] Spawning Horde of {HordeSize}! (Cost: {Cost})");
         float totalDifficulty = 0;
@@ -24,5 +24,7 @@ public partial class SpawnHorde : DirectorAction
         {
             DataManager.Instance.DirectorData.Performance.RegisterDirectorSpawn(totalDifficulty);
         }
+
+        return true;
     }
 }

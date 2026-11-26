@@ -202,8 +202,20 @@ public partial class Director : Node
         var action = Policy?.SelectAction(context);
         if (action == null) return;
 
-        action.Execute(currentTime);
-        spendCallback(action.Cost);
+        TryExecuteAction(action, currentTime, spendCallback);
+    }
+
+    /// <summary>
+    /// Executes a selected action and spends its cost only when the action succeeded, so a rejected
+    /// action (for example no free floor tile for a health pack) is free and stays available.
+    /// </summary>
+    public bool TryExecuteAction(DirectorAction? action, double currentTime, Action<float>? spendCallback = null)
+    {
+        if (action == null) return false;
+        if (!action.TryExecute(currentTime)) return false;
+
+        spendCallback?.Invoke(action.Cost);
+        return true;
     }
 
     private void EnsurePolicy()

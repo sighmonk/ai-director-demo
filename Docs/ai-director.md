@@ -118,10 +118,22 @@ which keeps arm A behaviour unchanged.
 | `SpawnHorde` | Negative | Spawns a horde immediately (scene default: 20 enemies) | 10 | 1 | 5 s |
 | `ReduceSpawnRate` | Benefit | Spawn interval × `1.5` (slower) | 10 | 1 | 5 s |
 | `DebuffEnemies` | Benefit | −5% speed, damage, scale and max HP | 10 | 1 | 5 s |
+| `SpawnHealthPack` | Benefit | Spawns a health pack on a reachable floor tile near the player, preferring tiles outside enemy aggro range | 10 | 1 | 5 s |
 
 `Cost`, `Weight` and `Cooldown` are exported on every action node, so they can be tuned per action
 in `Director.tscn`. Spawn-rate multipliers decay back to `1.0` at `0.1` per second and are clamped
 to `[0.3, 3.0]`.
+
+### Action success and failure
+
+`DirectorAction.OnExecute` reports whether the action had an effect. `TryExecute` applies the
+cooldown and emits `DirectorActionExecuted` only on success, and `Director.TryExecuteAction` spends
+the action cost only on success. A rejected action therefore stays ready and free; `SpawnHealthPack`,
+for example, returns `false` when `PickupManager` cannot find a reachable floor tile, and logs the
+rejection instead of charging benefit points.
+
+`SpawnHealthPack` exports `SpawnDistanceMin`, `SpawnDistanceMax` and `EnemyAggroAvoidRadius`; the
+placement itself lives in `PickupManager` (see [architecture.md](architecture.md)).
 
 ## Tuning parameters
 
