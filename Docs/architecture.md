@@ -49,9 +49,9 @@ that reaches for another singleton.
 
 | Manager | Responsibilities | Key API |
 | --- | --- | --- |
-| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `HealthPackSpawned`, `HealthPackCollected`, `PerformanceMetricsUpdated`, … |
+| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `HealthPackSpawned`, `HealthPackCollected`, `DungeonChanged`, `PerformanceMetricsUpdated`, … |
 | `DataManager` | Subscribes to gameplay signals, owns `DirectorData`, syncs player health, tracks spawned/living difficulty value. | `RegisterDirectorData`, `RegisterPlayer`, `RegisterEnemySpawn`, `RegisterEnemyDeath` |
-| `EnemyManager` | Spawns enemies on a timer, keeps the active enemy list, builds an `AStarGrid2D` from the world tilemap, answers floor/reachability queries and applies Director buffs/debuffs or spawn-rate changes. | `SetWorldTileMap`, `GetPath`, `IsFloorTile`, `IsFloorReachable`, `TryGetRandomFloorTileNear`, `ModifySpawnRate`, `BuffAllEnemies`, `DebuffAllEnemies`, `ForceSpawnEnemy`, `ActiveEnemies` |
+| `EnemyManager` | Spawns enemies on a timer, keeps the active enemy list, builds an `AStarGrid2D` from the world tilemap, answers floor/reachability queries and applies Director buffs/debuffs or spawn-rate changes. | `SetWorldTileMap`, `GetPath`, `IsFloorTile`, `IsFloorReachable`, `TryGetRandomFloorTileNear`, `RebuildNavigation`, `ModifySpawnRate`, `BuffAllEnemies`, `DebuffAllEnemies`, `ForceSpawnEnemy`, `ActiveEnemies` |
 | `GameManager` | Session clock, session progress, current difficulty from `DifficultyCurve`, player registration and debug toggles. | `SessionTime`, `SessionProgress`, `CurrentDifficulty`, `RegisterPlayer` |
 | `PickupManager` | Ambient health pack spawning, the active-pack cap and a direct spawn entry point for Director actions. Placement only uses floor tiles reachable from the player. | `TrySpawnNearPlayer`, `SpawnHealthPackAt`, `ActiveCount`, `MaxActiveHealthPacks` |
 
@@ -121,6 +121,9 @@ the same `HealthComponent` / `HitboxComponent` scenes.
 - **Strategy** — each Director intervention is a `DirectorAction` subclass; selection of the
   action to run is delegated to an `IActionPolicy` (`RulePolicy` by default), while filtering by
   cost and cooldown stays in the Director.
+- **Model/service split** — `DungeonWorldModel` holds the mutable floor layout and validates every
+  mutation, `DungeonMutator` applies accepted mutations to the tilemaps; the same pattern keeps
+  `HealthPackPlacement` and `AutoSpawnScheduler` testable without a scene.
 - **Composition** — health and hitbox behaviour is attached to entities as child nodes.
 
 ## Source map
@@ -129,7 +132,7 @@ the same `HealthComponent` / `HitboxComponent` scenes.
 Src/
 ├── AI Director/     Director, state machine, states, actions, data buffers
 ├── Components/      HealthComponent, HitboxComponent
-├── Dungeon/         Generation pipeline and tile rendering
+├── Dungeon/         Generation pipeline, tile rendering, runtime mutation
 ├── Enemies/         Enemy base class and EnemyRed implementation
 ├── Level/           Level scene orchestration
 ├── Managers/        Signal, Data, Enemy, Pickup and Game managers

@@ -82,6 +82,85 @@ public partial class DungeonGenerator : Node2D
     private GeneratorVisualizer _visualizer;
     private ExtraRoomDeterminator _extraRoomDeterminator;
     private DungeonRenderer _dungeonRenderer;
+
+    /// <summary>
+    /// Rooms and corridor cells of the generated dungeon, in pixel coordinates (as produced by the
+    /// generation pipeline). Includes rooms created at runtime.
+    /// </summary>
+    public IReadOnlyList<Rect2I> Rooms => _rooms;
+
+    /// <summary>
+    /// Main rooms as tile rectangles. <see cref="Rooms"/> also contains the small corridor cells
+    /// merged in by the hallway stage, which must not be treated as rooms when looking for corridor
+    /// cross-sections; <see cref="Rooms"/> itself uses pixel coordinates.
+    /// </summary>
+    public IReadOnlyList<Rect2I> GetRoomTileRects()
+    {
+        int minSide = 6 * TileSize;
+        var mainRooms = new List<Rect2I>();
+        foreach (Rect2I room in _rooms)
+        {
+            if (room.Size.X < minSide || room.Size.Y < minSide) continue;
+
+            mainRooms.Add(new Rect2I(
+                room.Position.X / TileSize,
+                room.Position.Y / TileSize,
+                Mathf.CeilToInt((float)room.Size.X / TileSize),
+                Mathf.CeilToInt((float)room.Size.Y / TileSize)));
+        }
+
+        return mainRooms;
+    }
+
+    /// <summary>Centre tile of every main room (the room centres are stored in pixel space).</summary>
+    public IReadOnlyList<Vector2I> GetRoomTileCenters()
+    {
+        var centers = new List<Vector2I>(_roomCenters.Count);
+        foreach (Vector2I center in _roomCenters)
+        {
+            centers.Add(new Vector2I(center.X / TileSize, center.Y / TileSize));
+        }
+
+        return centers;
+    }
+
+    /// <summary>Centre of every main room, in pixel coordinates.</summary>
+    public IReadOnlyList<Vector2I> RoomCenters => _roomCenters;
+
+    /// <summary>
+    /// Records a room created at runtime (tile coordinates) so the read-only view stays accurate.
+    /// </summary>
+    public void RegisterRuntimeRoom(Rect2I tileRect, Vector2I tileCenter)
+    {
+        _rooms.Add(new Rect2I(tileRect.Position * TileSize, tileRect.Size * TileSize));
+        _roomCenters.Add(new Vector2I(tileCenter.X * TileSize, tileCenter.Y * TileSize));
+    }
+
+    /// <summary>Room indices connected by a corridor (the room graph, including loop edges).</summary>
+    public IReadOnlyList<(int From, int To)> CorridorEdges => _corridorEdges;
+
+    /// <summary>Tile placer used to repaint the display layer after a mutation.</summary>
+    public TilePlacer? TilePlacer => GetNodeOrNull<TilePlacer>("TilePlacer");
+
+    /// <summary>Runtime mutation entry point (see <see cref="DungeonMutator"/>).</summary>
+    public DungeonMutator? Mutator => GetNodeOrNull<DungeonMutator>("Mutator");
+
+    /// <summary>Current floor tiles as stored in the collision tilemap.</summary>
+    public HashSet<Vector2I> GetFloorTiles()
+    {
+        var floors = new HashSet<Vector2I>();
+        if (WorldTileMap == null) return floors;
+
+        foreach (Vector2I cell in WorldTileMap.GetUsedCells())
+        {
+            if (WorldTileMap.GetCellAtlasCoords(cell) == FloorAtlasCoord)
+            {
+                floors.Add(cell);
+            }
+        }
+
+        return floors;
+    }
     
     public enum GenerationState
     {

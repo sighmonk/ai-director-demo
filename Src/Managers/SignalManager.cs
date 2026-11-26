@@ -20,5 +20,8 @@ public partial class SignalManager : Node
     [Signal] public delegate void WeaponHitEventHandler();
     [Signal] public delegate void HealthPackSpawnedEventHandler(Vector2 position);
     [Signal] public delegate void HealthPackCollectedEventHandler(float amount);
+
+    // DUNGEON SIGNALS
+    [Signal] public delegate void DungeonChangedEventHandler();
     
 }
