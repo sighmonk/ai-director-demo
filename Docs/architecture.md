@@ -111,8 +111,9 @@ the same `HealthComponent` / `HitboxComponent` scenes.
 - **Singleton** — managers exposed through `Instance` properties and registered as autoloads.
 - **Observer** — Godot signals are used for gameplay-to-analytics communication.
 - **State machine** — `DifficultyStateMachine` owns three `DirectorState` nodes.
-- **Strategy** — each Director intervention is a `DirectorAction` subclass; selection is weighted
-  and filtered by cost and cooldown.
+- **Strategy** — each Director intervention is a `DirectorAction` subclass; selection of the
+  action to run is delegated to an `IActionPolicy` (`RulePolicy` by default), while filtering by
+  cost and cooldown stays in the Director.
 - **Composition** — health and hitbox behaviour is attached to entities as child nodes.
 
 ## Source map

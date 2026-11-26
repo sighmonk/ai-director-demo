@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/AIDirector` and total **83 tests**.
+All tests live in `Tests/` and total **94 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -41,6 +41,7 @@ All tests live in `Tests/AIDirector` and total **83 tests**.
 | `DirectorActionTest` | 12 | Cost, weight, cooldown and execution contract |
 | `DifficultyStateMachineTest` | 4 | State enum completeness |
 | `ActionSelectionTest` | 8 | Type/cost/cooldown filtering, weighted selection distribution |
+| `ActionPolicyTest` | 11 | Policy selection, weight buckets, seeded replay, context snapshot |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather
 than exact draws, so they remain deterministic enough for CI.
@@ -59,7 +60,7 @@ The job name is part of the required branch-protection checks.
 
 ## Adding tests
 
-- Put new suites in `Tests/AIDirector` and add `[TestSuite]`.
+- Put new suites in `Tests/<Area>/` and add `[TestSuite]`.
 - Use `[TestCase]` for test methods and `[RequireGodotRuntime]` only when Godot types are needed.
 - Free any `Node` instances you create in `[AfterTest]` (`node.Free()`), otherwise GdUnit4 reports
   orphan nodes.

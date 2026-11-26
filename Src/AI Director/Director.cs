@@ -48,7 +48,18 @@ public partial class Director : Node
     [ExportGroup("Smoothing")]
     [Export] public float RatioSmoothingFactor = 0.1f;
 
+    [ExportGroup("Action Policy")]
+    /// <summary>Seed for the rule policy's random source (0 = global RNG).</summary>
+    [Export] public ulong SelectionSeed = 0;
+
+    /// <summary>
+    /// Selects the action to execute. Assigned in <see cref="_Ready"/> when not set beforehand;
+    /// defaults to <see cref="RulePolicy"/> so the baseline behaviour is unchanged.
+    /// </summary>
+    public IActionPolicy? Policy { get; set; }
+
     private Timer _checkTimer;
+    private RandomNumberGenerator? _selectionRng;
     private List<DirectorAction> _actions = new List<DirectorAction>();
     private float _smoothedRatio = 1.0f; // Start at perfect balance
     
@@ -144,6 +155,8 @@ public partial class Director : Node
             GD.PrintErr("[Director] StateMachine not found!");
         }
 
+        EnsurePolicy();
+
         _checkTimer = new Timer();
         _checkTimer.WaitTime = CheckInterval;
         _checkTimer.OneShot = false;
@@ -177,23 +190,34 @@ public partial class Director : Node
 
         if (candidates.Count == 0) return;
 
-        // Calculate Total Weight
-        float totalWeight = candidates.Sum(a => a.Weight);
+        EnsurePolicy();
 
-        // Weighted Random Selection
-        float randomValue = GD.Randf() * totalWeight;
-        float currentSum = 0;
+        var context = new ActionSelectionContext(
+            candidates,
+            type,
+            availablePoints,
+            currentTime,
+            StateMachine?.CurrentState.ToString() ?? "Unknown");
 
-        foreach (var action in candidates)
+        var action = Policy?.SelectAction(context);
+        if (action == null) return;
+
+        action.Execute(currentTime);
+        spendCallback(action.Cost);
+    }
+
+    private void EnsurePolicy()
+    {
+        if (Policy != null) return;
+
+        if (SelectionSeed != 0)
         {
-            currentSum += action.Weight;
-            if (randomValue <= currentSum)
-            {
-                // Execute this action
-                action.Execute(currentTime);
-                spendCallback(action.Cost);
-                break;
-            }
+            _selectionRng = new RandomNumberGenerator { Seed = SelectionSeed };
+            Policy = new RulePolicy(() => _selectionRng.Randf());
+        }
+        else
+        {
+            Policy = new RulePolicy();
         }
     }
 
