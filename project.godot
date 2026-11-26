@@ -21,6 +21,7 @@ DataManager="*res://Src/Managers/DataManager.tscn"
 SignalManager="*res://Src/Managers/SignalManager.tscn"
 EnemyManager="*res://Src/Managers/EnemyManager.tscn"
 GameManager="*res://Src/Managers/GameManager.tscn"
+PickupManager="*res://Src/Managers/PickupManager.tscn"
 
 [dotnet]
 

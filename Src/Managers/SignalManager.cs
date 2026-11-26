@@ -18,5 +18,7 @@ public partial class SignalManager : Node
     [Signal] public delegate void PlayerHealedEventHandler(float amount);
     [Signal] public delegate void WeaponFiredEventHandler();
     [Signal] public delegate void WeaponHitEventHandler();
+    [Signal] public delegate void HealthPackSpawnedEventHandler(Vector2 position);
+    [Signal] public delegate void HealthPackCollectedEventHandler(float amount);
     
 }

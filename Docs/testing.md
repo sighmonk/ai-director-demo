@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **94 tests**.
+All tests live in `Tests/` and total **111 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -42,6 +42,9 @@ All tests live in `Tests/` and total **94 tests**.
 | `DifficultyStateMachineTest` | 4 | State enum completeness |
 | `ActionSelectionTest` | 8 | Type/cost/cooldown filtering, weighted selection distribution |
 | `ActionPolicyTest` | 11 | Policy selection, weight buckets, seeded replay, context snapshot |
+| `HealthPackPlacementTest` | 9 | Distance ring edges, player-cell exclusion, candidate filtering, seeded selection |
+| `AutoSpawnSchedulerTest` | 5 | Active-pack cap, spawn interval, first-spawn delay |
+| `HealthPackPickupTest` | 3 | Runtime pickup heals once, clamps at max HP, never damages the player |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather
 than exact draws, so they remain deterministic enough for CI.
