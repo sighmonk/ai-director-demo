@@ -113,6 +113,7 @@ tested without a scene.
 | `DungeonTopology.FindPassages` | Corridor cross-sections of at most 3 tiles, excluding room interiors |
 | `DungeonTopology.IsClosable` | Simulates a closure and checks every room centre plus the reference cell |
 | `DungeonWorldModel.TryCreateRoom(area, openingSide)` | Validates bounds, overlap and occupied cells, carves the room and one tunnel, verifies reachability, rolls back on failure. The accepted room is reported through `LastCreatedRoom` / `LastCreatedRoomCenter` |
+| `DungeonRoomPlacement.FindCandidates(...)` | Deterministic search for free room squares anchored to an existing floor tile, with a minimum player distance |
 | `DungeonWorldModel.TryClosePassage(tiles)` | Replaces the cross-section with walls only when the dungeon stays connected; the model is unchanged otherwise |
 | `DungeonWorldModel.RestoreFloors(tiles)` | Restores the exact tiles of a closed passage |
 | `DungeonMutator.GetClosablePassages()` | Passages that can be closed right now |
@@ -121,6 +122,9 @@ Mutation rules:
 
 - The room floor area must stay at least one tile inside the dungeon bounding box so the perimeter
   walls exist; rooms smaller than 3 × 3 tiles are rejected.
+- Runtime rooms are anchored to an existing floor tile: `DungeonRoomPlacement` only proposes squares
+  whose opening side touches a corridor or room, so the tunnel is either empty or at most one tile
+  long.
 - Any floor tile or entity cell (player, living enemies) inside the target area rejects the
   mutation. Cells are sampled from `GameManager.Player` and `EnemyManager.ActiveEnemies` before any
   tile is written.

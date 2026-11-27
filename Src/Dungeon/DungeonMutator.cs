@@ -53,6 +53,18 @@ public partial class DungeonMutator : Node2D
         return _model;
     }
 
+    /// <summary>
+    /// Ensures the model exists and refreshes the cells occupied by the player and living enemies.
+    /// </summary>
+    public DungeonWorldModel? RefreshModel()
+    {
+        var model = EnsureModel();
+        if (model == null) return null;
+
+        SyncBlockedCells();
+        return model;
+    }
+
     public bool TryCreateRoom(
         Rect2I floorArea,
         RoomOpeningSide openingSide,

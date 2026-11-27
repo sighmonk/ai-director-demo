@@ -16,7 +16,7 @@ public abstract partial class DirectorAction : Node
 
     private double _lastUsedTime = -999.0;
 
-    public bool CanExecute(float availablePoints, double currentTime)
+    public virtual bool CanExecute(float availablePoints, double currentTime)
     {
         if (availablePoints < Cost) return false;
         if (currentTime < _lastUsedTime + Cooldown) return false;

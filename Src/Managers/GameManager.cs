@@ -28,6 +28,7 @@ public partial class GameManager : Node
     [Export] public Curve DifficultyCurve;           // Shared curve: X = time progress (0-1), Y = difficulty (0-1)
     
     public Player Player { get; private set; }
+    public DungeonGenerator? Dungeon { get; private set; }
     public float SessionTime { get; private set; } = 0.0f;
     
     /// <summary>
@@ -63,5 +64,11 @@ public partial class GameManager : Node
         
         // Also register with DataManager as it was doing before
         DataManager.Instance.RegisterPlayer(player);
+    }
+
+    public void RegisterDungeon(DungeonGenerator dungeon)
+    {
+        Dungeon = dungeon;
+        GD.Print("[GameManager] Dungeon registered.");
     }
 }
