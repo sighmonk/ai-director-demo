@@ -24,5 +24,7 @@ public partial class SignalManager : Node
     // DUNGEON SIGNALS
     [Signal] public delegate void DungeonChangedEventHandler();
     [Signal] public delegate void DungeonRoomCreatedEventHandler(string kind, Vector2I tilePosition, Vector2I tileSize, int enemyCount);
+    [Signal] public delegate void DungeonPassageClosedEventHandler(int passageId, int tileCount, double closedAt, double reopenAt);
+    [Signal] public delegate void DungeonPassageReopenedEventHandler(int passageId, int tileCount, double reopenedAt);
     
 }

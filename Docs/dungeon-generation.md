@@ -114,6 +114,7 @@ tested without a scene.
 | `DungeonTopology.IsClosable` | Simulates a closure and checks every room centre plus the reference cell |
 | `DungeonWorldModel.TryCreateRoom(area, openingSide)` | Validates bounds, overlap and occupied cells, carves the room and one tunnel, verifies reachability, rolls back on failure. The accepted room is reported through `LastCreatedRoom` / `LastCreatedRoomCenter` |
 | `DungeonRoomPlacement.FindCandidates(...)` | Deterministic search for free room squares anchored to an existing floor tile, with a minimum player distance |
+| `DungeonPassageSelection.Select(...)` | Drops passages that belong to the player's room exits or would strand an enemy |
 | `DungeonWorldModel.TryClosePassage(tiles)` | Replaces the cross-section with walls only when the dungeon stays connected; the model is unchanged otherwise |
 | `DungeonWorldModel.RestoreFloors(tiles)` | Restores the exact tiles of a closed passage |
 | `DungeonMutator.GetClosablePassages()` | Passages that can be closed right now |
@@ -131,6 +132,8 @@ Mutation rules:
 - A passage is never closed when it covers the player cell or a room centre, or when the remaining
   floors would no longer connect every room centre. The check runs before the first write, so a
   rejected mutation leaves both tilemaps and the A* grid untouched.
+- The Director additionally excludes the exits of the room the player stands in and passages whose
+  closure would leave a living enemy unreachable; see `DungeonPassageSelection`.
 - After a successful mutation the mutator repaints `WorldTileMap` (new floor tiles get wall
   neighbours), refreshes `DisplayTileMap` through `TilePlacer.UpdateDisplayTiles`, calls
   `EnemyManager.RebuildNavigation()` and emits `SignalManager.DungeonChanged`.

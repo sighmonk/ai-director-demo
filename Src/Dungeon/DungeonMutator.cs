@@ -129,12 +129,43 @@ public partial class DungeonMutator : Node2D
         return true;
     }
 
-    public List<DungeonPassage> GetClosablePassages()
+    public List<DungeonPassage> GetClosablePassages(bool avoidPlayerRoom = false, bool avoidStrandingEnemies = false)
     {
         if (EnsureModel() == null) return new List<DungeonPassage>();
 
         SyncBlockedCells();
-        return _model!.FindClosablePassages();
+        List<DungeonPassage> passages = _model!.FindClosablePassages();
+        if (!avoidPlayerRoom && !avoidStrandingEnemies) return passages;
+
+        Vector2I playerCell = _model.PlayerCell;
+        var player = GetNodeOrNull<GameManager>("/root/GameManager")?.Player;
+        if (player != null && IsInstanceValid(player)) playerCell = WorldToCell(player.GlobalPosition);
+
+        var enemyCells = avoidStrandingEnemies ? CollectEnemyCells() : new List<Vector2I>();
+        var rooms = avoidPlayerRoom ? _model.Rooms : new List<Rect2I>();
+
+        return DungeonPassageSelection.Select(
+            passages,
+            _model.Floors,
+            rooms,
+            playerCell,
+            _model.GetReferenceCell(),
+            enemyCells);
+    }
+
+    private List<Vector2I> CollectEnemyCells()
+    {
+        var cells = new List<Vector2I>();
+        var enemies = GetNodeOrNull<EnemyManager>("/root/EnemyManager");
+        if (enemies == null) return cells;
+
+        foreach (Enemy enemy in enemies.ActiveEnemies)
+        {
+            if (!IsInstanceValid(enemy)) continue;
+            cells.Add(WorldToCell(enemy.GlobalPosition));
+        }
+
+        return cells;
     }
 
     private void SyncBlockedCells()
