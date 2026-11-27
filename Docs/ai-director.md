@@ -99,9 +99,11 @@ state machine, filtering and points economy stay identical:
 
 | Type | Responsibility |
 | --- | --- |
-| `ActionSelectionContext` | Immutable snapshot: eligible candidates, action type, available points, current time, state name |
+| `ActionSelectionContext` | Immutable snapshot: eligible candidates, action type, available points, current time, state name, optional game state |
 | `IActionPolicy` | `SelectAction(context)` returns the action to execute, or `null` to do nothing |
 | `RulePolicy` | Baseline: weighted random draw over positive weights; zero/negative weights are never selected |
+| `LlmFreePolicy` | Arm B: asynchronous model proposal, recorded but not corrected when invalid |
+| `LlmBoundedPolicy` | Arm C: the same proposal, validated; on rejection it falls back to `RulePolicy` |
 
 `Director` filters candidates by type, cost and `CanExecute` before calling the policy, so a policy
 never has to re-implement eligibility rules. `Director.Policy` is assigned in `_Ready` when it has

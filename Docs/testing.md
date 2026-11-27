@@ -61,6 +61,9 @@ All tests live in `Tests/` and total **171 tests**.
 The weighted-selection tests are statistical: they assert broad distribution properties rather
 than exact draws, so they remain deterministic enough for CI.
 
+The LLM suites use `FakeLlmClient` and a fake clock. CI never calls a provider and needs no API
+key; see [llm-policies.md](llm-policies.md).
+
 ## CI execution
 
 The `Build & Test` job in `.github/workflows/ci.yml`:

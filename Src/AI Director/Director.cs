@@ -68,6 +68,9 @@ public partial class Director : Node
     private RandomNumberGenerator? _selectionRng;
     private List<DirectorAction> _actions = new List<DirectorAction>();
     private float _smoothedRatio = 1.0f; // Start at perfect balance
+
+    /// <summary>Action nodes collected from <c>Director/Actions</c>; used to build a policy catalog.</summary>
+    public IReadOnlyList<DirectorAction> Actions => _actions;
     
     /// <summary>
     /// Current smoothed performance ratio (Cp/Ep). Publicly accessible for states.
@@ -212,12 +215,31 @@ public partial class Director : Node
             type,
             availablePoints,
             currentTime,
-            StateMachine?.CurrentState.ToString() ?? "Unknown");
+            StateMachine?.CurrentState.ToString() ?? "Unknown",
+            BuildGameState(currentTime));
 
         var action = Policy?.SelectAction(context);
         if (action == null) return;
 
         TryExecuteAction(action, currentTime, spendCallback);
+    }
+
+    private DirectorGameState BuildGameState(double currentTime)
+    {
+        float healthRatio = 1.0f;
+        if (Data?.Player != null && Data.Player.MaxHealth > 0f)
+        {
+            healthRatio = Data.Player.CurrentHealth / Data.Player.MaxHealth;
+        }
+
+        var enemies = GetNodeOrNull<EnemyManager>("/root/EnemyManager");
+        return new DirectorGameState(
+            _smoothedRatio,
+            healthRatio,
+            Data?.Performance?.KillRate ?? 0f,
+            Data?.Performance?.DamageTakenRate ?? 0f,
+            enemies?.ActiveEnemies.Count ?? 0,
+            currentTime);
     }
 
     /// <summary>
