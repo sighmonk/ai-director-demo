@@ -58,7 +58,6 @@ function Wait-CalibrationBatch {
     }
 }
 
-$started = Get-Date
 $logDirectory = Join-Path $outputDirectory 'logs'
 New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
 
@@ -101,8 +100,6 @@ foreach ($profile in $Profiles) {
 if ($batch.Count -gt 0) {
     Wait-CalibrationBatch -Batch $batch
 }
-
-$elapsed = (Get-Date) - $started
 
 $records = foreach ($profile in $Profiles) {
     foreach ($file in Get-ChildItem -Path $outputDirectory -Filter "$profile-*.jsonl") {
@@ -181,7 +178,6 @@ foreach ($row in $summary) {
 
 $lines += ''
 $lines += "- Monotonic novice < average < expert medians: $monotonic"
-$lines += "- Wall-clock run time: $([math]::Round($elapsed.TotalMinutes, 1)) min"
 $lines += ''
 $lines += 'Raw JSONL records are written to `TestResults/calibration/` and are not committed.'
 

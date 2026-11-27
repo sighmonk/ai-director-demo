@@ -46,8 +46,8 @@ touches `DirectorData` or Director internals; `SimulationBotIsolationTest` guard
 | `expert` | 0.30 s | 4.5° | 0–215 px | 0.30 s | 0.70 × | 120 px |
 | `sandbagger` | expert values; `Degrade` for the first 150 s | | | | | |
 
-`Degrade` slows reactions, widens aim error, pulls the band to 90–150 px, slows the trigger and
-halves the crowd avoidance. The sandbagger therefore plays below its skill until
+`Degrade` slows reactions, widens aim error, pulls the band to 120–190 px, slows the trigger and
+reduces crowd avoidance. The sandbagger therefore plays below its skill until
 `SandbagUntilSeconds` (150 s) and at expert level afterwards.
 
 ## Determinism

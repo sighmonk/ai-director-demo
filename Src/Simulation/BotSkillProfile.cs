@@ -124,16 +124,16 @@ public sealed class BotSkillProfile
         return new BotSkillProfile
         {
             Name = profile.Name + "-sandbag",
-            ReactionTime = Math.Max(profile.ReactionTime * 3f, 0.6f),
-            AimErrorDegrees = Math.Max(profile.AimErrorDegrees * 3.5f, 14f),
-            PreferredDistanceMin = 90f,
-            PreferredDistanceMax = 150f,
-            FireInterval = Math.Max(profile.FireInterval * 2f, 0.45f),
-            MoveSpeedFactor = Math.Max(profile.MoveSpeedFactor * 0.7f, 0.2f),
+            ReactionTime = Math.Max(profile.ReactionTime * 2f, 0.6f),
+            AimErrorDegrees = Math.Max(profile.AimErrorDegrees * 2f, 10f),
+            PreferredDistanceMin = 120f,
+            PreferredDistanceMax = 190f,
+            FireInterval = Math.Max(profile.FireInterval * 1.5f, 0.45f),
+            MoveSpeedFactor = Math.Max(profile.MoveSpeedFactor * 0.85f, 0.2f),
             StrafeWhileInBand = false,
-            ThreatRadius = 100f,
-            ThreatAvoidance = 0.3f,
-            DangerRadius = 80f,
+            ThreatRadius = 140f,
+            ThreatAvoidance = 0.4f,
+            DangerRadius = 100f,
             PerceptionRadius = profile.PerceptionRadius
         };
     }
