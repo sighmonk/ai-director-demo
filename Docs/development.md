@@ -30,6 +30,7 @@ Controls: **WASD** to move, **left mouse** to shoot, **scroll wheel** to zoom th
 | Run | `godot --path .` |
 | Import assets | `godot --headless --path . --import` |
 | Test | `dotnet test "project kitchen.sln" --settings .runsettings` |
+| Bot calibration | `pwsh Tools/calibrate.ps1 -SeedCount 25 -SessionSeconds 600` |
 | Export Windows | `godot --headless --path . --export-release "Windows Desktop" "Builds/windows/AIDirector.exe"` |
 | Export Linux | `godot --headless --path . --export-release "Linux" "Builds/linux/AIDirector.x86_64"` |
 | Export macOS | `godot --headless --path . --export-release "macOS" "Builds/macos/AI Director Demo.app"` |

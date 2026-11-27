@@ -23,6 +23,9 @@ public partial class EnemyManager : Node
     [Export] public int MaxMaxEnemies = 30;             // Maximum enemies at hardest point
     [Export] public bool SpawningEnabled = true;
 
+    /// <summary>Seed for spawn positions and enemy choice (0 = random).</summary>
+    [Export] public ulong Seed = 0;
+
     private int _currentMaxEnemies;
     private List<Enemy> _activeEnemies = new List<Enemy>();
     private TileMapLayer _worldTileMap;
@@ -38,6 +41,9 @@ public partial class EnemyManager : Node
 
     public override void _Ready()
     {
+        ulong seed = CalibrationOptions.Current != null ? (ulong)CalibrationOptions.Current.Seed : Seed;
+        if (seed != 0) _rng.Seed = seed;
+
         _currentSpawnInterval = BaseSpawnInterval;
         _currentMaxEnemies = BaseMaxEnemies;
         

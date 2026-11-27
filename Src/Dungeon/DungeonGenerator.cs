@@ -186,6 +186,8 @@ public partial class DungeonGenerator : Node2D
     
     public override void _Ready()
     {
+        if (CalibrationOptions.Current != null) Seed = CalibrationOptions.Current.Seed;
+
         // Initialize RNG with seed
         if (Seed == 0)
         {

@@ -100,7 +100,7 @@ sequenceDiagram
 
 | Type | Base | Responsibility |
 | --- | --- | --- |
-| `Player` | `CharacterBody2D` | WASD movement, mouse aiming, shooting, forwards health changes as damage/heal signals. Scene default speed is `600`. |
+| `Player` | `CharacterBody2D` | WASD movement, aiming and shooting through an `IPlayerInput` (device input by default; the simulation bot can replace it). Scene default speed is `600`. |
 | `Enemy` | `Area2D` | Registers with `EnemyManager`, contact damage through `HitboxComponent`, death handling, runtime buff/debuff with visual feedback. |
 | `EnemyRed` | `Enemy` | Aggro (200 px) / de-aggro (800 px), line-of-sight raycast, A* path following refreshed every 0.2 s. |
 | `HealthComponent` | `Node2D` | HP, health bar, optional invincibility frames, `HealthChanged` and `Died` signals. |
@@ -109,6 +109,7 @@ sequenceDiagram
 | `HealthPack` | `Area2D` | Group `HealthPickups`: heals the player once through `HealthComponent.Heal`, then plays a short scale/fade effect and frees itself. Enemies cannot pick it up. |
 | `PlayerCamera` | `Camera2D` | Free-look camera with scroll-wheel zoom. |
 | `DebugUi` | `CanvasLayer` | Renders Director state, Cp/Ep/ratio, points, spawn rate and recent actions. |
+| `SimulationBot` | `Node` | Seeded simulated player for the experiment: perception, reaction, aim error, distance keeping and crowd avoidance; drives the player through `ScriptedPlayerInput`. |
 
 Composition is preferred over inheritance for reusable behaviour: enemies and the player share
 the same `HealthComponent` / `HitboxComponent` scenes.
@@ -137,11 +138,13 @@ Src/
 ├── Level/           Level scene orchestration
 ├── Managers/        Signal, Data, Enemy, Pickup and Game managers
 ├── Pickups/         Health pack entity, placement rules and spawn scheduler
-├── Player/          Player controller
+├── Player/          Player controller and input abstraction
 ├── Projectiles/     PlayerBullet
+├── Simulation/      Bot profiles, bot controller and the headless calibration harness
 └── UI/              Camera and debug overlay
 Tests/AIDirector/    GdUnit4 test suites for the Director
 Tests/Gameplay/      GdUnit4 test suites for gameplay systems
+Tests/Simulation/    GdUnit4 test suites for the bot profiles and calibration options
 ```
 
 ## Runtime caveats

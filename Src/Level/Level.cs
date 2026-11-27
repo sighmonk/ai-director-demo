@@ -14,9 +14,19 @@ public partial class Level : Node
 
     private DungeonGenerator _dungeonGenerator;
     private Player _player;
+    private CalibrationSession? _calibration;
 
     public override void _Ready()
     {
+        CalibrationOptions? calibration = CalibrationOptions.Current;
+        if (calibration != null)
+        {
+            _calibration = new CalibrationSession { Name = "CalibrationSession" };
+            _calibration.Configure(calibration);
+            AddChild(_calibration);
+            GameManager.Instance.SessionDuration = calibration.SessionSeconds;
+        }
+
         // Find the DungeonGenerator node
         _dungeonGenerator = GetNode<DungeonGenerator>("DungeonGenerator");
 
@@ -119,6 +129,8 @@ public partial class Level : Node
         {
             GD.PrintErr("PlayerCamera scene not assigned, player will not have a camera");
         }
+
+        _calibration?.AttachPlayer(_player);
     }
 
     private void SpawnEnemyAtPosition(Vector2I position)

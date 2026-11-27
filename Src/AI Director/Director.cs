@@ -53,6 +53,12 @@ public partial class Director : Node
     [Export] public ulong SelectionSeed = 0;
 
     /// <summary>
+    /// When false the Director keeps its data registration but never evaluates performance or runs
+    /// actions. Calibration (static arm S) sets this to false.
+    /// </summary>
+    [Export] public bool Enabled = true;
+
+    /// <summary>
     /// Selects the action to execute. Assigned in <see cref="_Ready"/> when not set beforehand;
     /// defaults to <see cref="RulePolicy"/> so the baseline behaviour is unchanged.
     /// </summary>
@@ -157,6 +163,13 @@ public partial class Director : Node
 
         EnsurePolicy();
 
+        if (CalibrationOptions.Current?.StaticArm == true) Enabled = false;
+        if (!Enabled)
+        {
+            GD.Print("[Director] Disabled (static arm).");
+            return;
+        }
+
         _checkTimer = new Timer();
         _checkTimer.WaitTime = CheckInterval;
         _checkTimer.OneShot = false;
@@ -167,6 +180,8 @@ public partial class Director : Node
 
     public override void _Process(double delta)
     {
+        if (!Enabled) return;
+
         // Delegate behavior to current state
         StateMachine?.UpdateState(delta);
     }
