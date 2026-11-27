@@ -109,6 +109,9 @@ not been set already; `Director.SelectionSeed` (`0` = global RNG) makes the `Rul
 reproducible for fixed-seed experiment runs. State and action-type filtering stay in the Director,
 which keeps arm A behaviour unchanged.
 
+`Director.Enabled` switches the whole evaluation off while keeping `DirectorData` registered; the
+static arm S of the experiment uses it. See [simulation.md](simulation.md).
+
 ## Director actions
 
 | Action | Type | Default effect | Cost | Weight | Cooldown |
@@ -207,6 +210,7 @@ All parameters below are exported on `Director` and can be changed in the inspec
 | `MaxPointsMultiplier` | 4.0 | Points multiplier at the extremes |
 | `RatioSmoothingFactor` | 0.1 | Exponential smoothing factor |
 | `SelectionSeed` | 0 | Seed for the rule policy's random source; `0` uses the global RNG |
+| `Enabled` | true | When false the Director keeps its data registration but never evaluates or executes actions (static arm S) |
 
 ## Observation and debugging
 
