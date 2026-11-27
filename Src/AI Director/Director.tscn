@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://4no85cq6i7b" path="res://Src/AI Director/States/Intensify.cs" id="6_poo06"]
 [ext_resource type="Script" uid="uid://d3lm4q1t7effj" path="res://Src/AI Director/Actions/IncreaseSpawnRate.cs" id="7_ybp53"]
 [ext_resource type="Script" uid="uid://ba02l175q0u0d" path="res://Src/AI Director/Actions/SpawnHealthPack.cs" id="10_icfmi"]
+[ext_resource type="Script" uid="uid://cwepl4jyg4kf" path="res://Src/AI Director/Actions/AddRewardRoom.cs" id="11_fpgce"]
+[ext_resource type="Script" uid="uid://dh51gfgxhadqd" path="res://Src/AI Director/Actions/AddThreatRoom.cs" id="12_rduci"]
 
 [node name="Director" type="Node" unique_id=322876743 node_paths=PackedStringArray("Data", "StateMachine")]
 script = ExtResource("1_jmqs8")
@@ -51,6 +53,16 @@ script = ExtResource("7_ybp53")
 
 [node name="SpawnHealthPack" type="Node" parent="Actions" unique_id=1736737457]
 script = ExtResource("10_icfmi")
+
+[node name="AddRewardRoom" type="Node" parent="Actions" unique_id=2031871428]
+script = ExtResource("11_fpgce")
+Weight = 1.5
+Cooldown = 20.0
+
+[node name="AddThreatRoom" type="Node" parent="Actions" unique_id=1261549091]
+script = ExtResource("12_rduci")
+Weight = 1.5
+Cooldown = 20.0
 
 [node name="DifficultyStateMachine" type="Node" parent="." unique_id=536149054 node_paths=PackedStringArray("_stateNodes")]
 script = ExtResource("3_8u4u6")

@@ -119,6 +119,8 @@ which keeps arm A behaviour unchanged.
 | `ReduceSpawnRate` | Benefit | Spawn interval × `1.5` (slower) | 10 | 1 | 5 s |
 | `DebuffEnemies` | Benefit | −5% speed, damage, scale and max HP | 10 | 1 | 5 s |
 | `SpawnHealthPack` | Benefit | Spawns a health pack on a reachable floor tile near the player, preferring tiles outside enemy aggro range | 10 | 1 | 5 s |
+| `AddRewardRoom` | Benefit | Opens a small room next to an existing corridor or room and places one health pack in its centre | 10 | 1.5 | 20 s |
+| `AddThreatRoom` | Negative | Opens the same kind of room and spawns `EnemiesPerRoom` enemies on its floor tiles | 10 | 1.5 | 20 s |
 
 `Cost`, `Weight` and `Cooldown` are exported on every action node, so they can be tuned per action
 in `Director.tscn`. Spawn-rate multipliers decay back to `1.0` at `0.1` per second and are clamped
@@ -134,6 +136,32 @@ rejection instead of charging benefit points.
 
 `SpawnHealthPack` exports `SpawnDistanceMin`, `SpawnDistanceMax` and `EnemyAggroAvoidRadius`; the
 placement itself lives in `PickupManager` (see [architecture.md](architecture.md)).
+
+### Runtime room actions
+
+`AddRewardRoom` and `AddThreatRoom` share `AddRoomAction`, which opens a new room through the
+`DungeonMutator` (see [dungeon-generation.md](dungeon-generation.md)). Both are limited by
+`MaxRoomsAddedPerSession` and report a rejection without spending points when no room can be
+carved.
+
+- **Candidate search** — `DungeonRoomPlacement.FindCandidates` anchors a square room of
+  `RoomSideMin`–`RoomSideMax` tiles so the midpoint of one side touches an existing floor tile.
+  The area must stay one tile inside the dungeon bounds, contain no floor or entity cell, and its
+  centre must be at least `MinDistanceFromPlayer` tiles from the player. The search is
+  deterministic: floors, sides and sizes are enumerated in a fixed order.
+- **Room contents** — `AddRewardRoom` validates that `PickupManager.HealthPackScene` is assigned,
+  then spawns one pack at the room centre. `AddThreatRoom` spawns `EnemiesPerRoom` enemies on
+  sorted floor cells inside the room and records their difficulty value through
+  `DataManager.RegisterDirectorSpawn`.
+- **Validation** — `AddRoomAction` asks the mutator for a refreshed model, so player and living
+  enemy cells are never covered, and tries at most `MaxCandidateAttempts` candidates. A failed
+  mutation leaves the dungeon untouched.
+- **Telemetry** — every created room emits `SignalManager.DungeonRoomCreated(kind, tilePosition,
+  tileSize, entityCount)` for the experiment log.
+
+`MaxRoomsAddedPerSession`, `RoomSideMin`, `RoomSideMax`, `MinDistanceFromPlayer` and
+`MaxCandidateAttempts` are exported on the actions; `EnemiesPerRoom` is exported on
+`AddThreatRoom`.
 
 ## Tuning parameters
 

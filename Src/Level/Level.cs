@@ -22,6 +22,8 @@ public partial class Level : Node
 
         if (_dungeonGenerator != null)
         {
+            GameManager.Instance.RegisterDungeon(_dungeonGenerator);
+
             // Connect to the DungeonGenerationCompleted signal
             _dungeonGenerator.DungeonGenerationCompleted += OnDungeonGenerationCompleted;
             GD.Print("Connected to DungeonGenerator's completion signal");

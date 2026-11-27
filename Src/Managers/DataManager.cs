@@ -90,6 +90,12 @@ public partial class DataManager : Node
         DirectorData?.Performance?.RegisterEnemySpawn(value);
     }
 
+    /// <summary>Records an enemy that a Director action spawned, for the experiment logs.</summary>
+    public void RegisterDirectorSpawn(float value)
+    {
+        DirectorData?.Performance?.RegisterDirectorSpawn(value);
+    }
+
     public void RegisterEnemyDeath(float value)
     {
         CurrentLivingValue = Mathf.Max(0, CurrentLivingValue - value);

@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **146 tests**.
+All tests live in `Tests/` and total **155 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -49,6 +49,8 @@ All tests live in `Tests/` and total **146 tests**.
 | `HealthPackPickupTest` | 3 | Runtime pickup heals once, clamps at max HP, never damages the player |
 | `DungeonTopologyTest` | 13 | Reachability, bridges, corridor cross-sections, closability |
 | `DungeonWorldModelTest` | 12 | Room creation rejection paths, passage close/reopen, rollback, determinism |
+| `DungeonRoomPlacementTest` | 5 | Runtime room candidates: adjacency, free space, player distance, bounds, determinism |
+| `AddRoomActionTest` | 4 | Reward/threat room action wiring, defaults and the session limit |
 | `DungeonMutatorWiringTest` | 1 | Mutator node present in the dungeon scene |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather

@@ -254,6 +254,13 @@ public partial class EnemyManager : Node
         return TrySpawnEnemy();
     }
 
+    /// <summary>Spawns one enemy of the given scene at an exact world position.</summary>
+    public Enemy? SpawnEnemyAt(PackedScene scene, Vector2 position)
+    {
+        if (scene == null) return null;
+        return SpawnEnemy(scene, position);
+    }
+
     private Enemy TrySpawnEnemy()
     {
         if (EnemyScenes.Count == 0) 
