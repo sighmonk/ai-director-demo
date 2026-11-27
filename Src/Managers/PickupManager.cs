@@ -49,7 +49,8 @@ public partial class PickupManager : Node
 
     public override void _Ready()
     {
-        _random = Seed != 0 ? new Random((int)Seed) : new Random();
+        ulong seed = CalibrationOptions.Current != null ? (ulong)CalibrationOptions.Current.Seed : Seed;
+        _random = seed != 0 ? new Random((int)seed) : new Random();
         _scheduler = new AutoSpawnScheduler(MaxActiveHealthPacks, SpawnInterval, FirstSpawnDelay);
         GD.Print($"[PickupManager] Ready (max {MaxActiveHealthPacks} packs, every {SpawnInterval}s)");
     }
