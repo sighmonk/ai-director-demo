@@ -131,7 +131,7 @@ the same `HealthComponent` / `HitboxComponent` scenes.
 
 ```text
 Src/
-├── AI Director/     Director, state machine, states, actions, data buffers
+├── AI Director/     Director, state machine, states, actions, data buffers, policies
 ├── Components/      HealthComponent, HitboxComponent
 ├── Dungeon/         Generation pipeline, tile rendering, runtime mutation
 ├── Enemies/         Enemy base class and EnemyRed implementation

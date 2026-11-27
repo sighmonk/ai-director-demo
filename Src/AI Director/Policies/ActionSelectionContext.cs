@@ -10,13 +10,15 @@ public sealed class ActionSelectionContext
         ActionType actionType,
         float availablePoints,
         double currentTime,
-        string stateName)
+        string stateName,
+        DirectorGameState? gameState = null)
     {
         Candidates = candidates;
         ActionType = actionType;
         AvailablePoints = availablePoints;
         CurrentTime = currentTime;
         StateName = stateName;
+        GameState = gameState;
     }
 
     /// <summary>Actions that are already eligible for the requested type, cost and cooldown.</summary>
@@ -29,4 +31,7 @@ public sealed class ActionSelectionContext
     public double CurrentTime { get; }
 
     public string StateName { get; }
+
+    /// <summary>Snapshot for policies that prompt a model; null when the policy needs no state.</summary>
+    public DirectorGameState? GameState { get; }
 }

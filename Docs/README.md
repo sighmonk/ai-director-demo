@@ -16,6 +16,8 @@ gameplay interventions in real time.
 | [architecture.md](architecture.md) | Runtime structure, autoloads, signals, entities and lifecycle |
 | [ai-director.md](ai-director.md) | Performance ratio, states, points economy and Director actions |
 | [dungeon-generation.md](dungeon-generation.md) | Procedural dungeon pipeline and rendering |
+| [simulation.md](simulation.md) | Simulated players, skill profiles and headless calibration |
+| [llm-policies.md](llm-policies.md) | LLM action policies, validator, telemetry and DeepSeek configuration |
 | [testing.md](testing.md) | GdUnit4 suites, commands and CI test execution |
 | [development.md](development.md) | Local setup, secrets, local-only files and workflows |
 | [ci-cd.md](ci-cd.md) | GitHub Actions, exports, artifacts and releases |
@@ -28,7 +30,7 @@ gameplay interventions in real time.
 | Engine | Godot 4.7.2 (.NET, Forward+) |
 | Runtime | .NET 8, C# 12 |
 | Test framework | GdUnit4 5.1.0-rc7 (API), 3.2.0 (adapter), 1.1.0 (analyzers) |
-| Unit tests | 83 tests in `Tests/AIDirector` |
+| Unit tests | 194 tests in `Tests/` |
 | CI | Build + tests on pull requests; Windows/Linux/macOS exports and build prereleases on `main`; stable releases on `v*` tags |
 | Main scene | `res://Src/Level/Level.tscn` |
 
@@ -56,6 +58,8 @@ If you are new to the project:
 1. [architecture.md](architecture.md) — how the runtime fits together.
 2. [ai-director.md](ai-director.md) — the DDA algorithm and its parameters.
 3. [dungeon-generation.md](dungeon-generation.md) — how levels are produced.
-4. [testing.md](testing.md) — what is covered by tests.
-5. [development.md](development.md) and [ci-cd.md](ci-cd.md) — how to build, test and ship.
-6. [agent-workflow.md](agent-workflow.md) — contribution and automation rules.
+4. [simulation.md](simulation.md) — the simulated players used by the experiment.
+5. [llm-policies.md](llm-policies.md) — the LLM arms and their telemetry.
+6. [testing.md](testing.md) — what is covered by tests.
+7. [development.md](development.md) and [ci-cd.md](ci-cd.md) — how to build, test and ship.
+8. [agent-workflow.md](agent-workflow.md) — contribution and automation rules.

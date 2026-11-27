@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **171 tests**.
+All tests live in `Tests/` and total **194 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -56,10 +56,16 @@ All tests live in `Tests/` and total **171 tests**.
 | `BotSkillProfileTest` | 4 | Profile mapping, ordering, sandbag degradation and the 150 s window |
 | `CalibrationOptionsTest` | 4 | Calibration command-line parsing and defaults |
 | `SimulationBotIsolationTest` | 1 | The bot sources never reference Director internals |
+| `LlmValidatorTest` | 7 | Response schema, catalog membership, candidate eligibility, cost and cooldown |
+| `LlmPolicyTest` | 11 | Cadence, deadline metric, retries, failure flag, arm B vs arm C, token/cost accounting |
+| `LlmTelemetryTest` | 5 | JSONL decisions, legal rate, 5 % flag, sample cap, session summary |
 | `DungeonMutatorWiringTest` | 1 | Mutator node present in the dungeon scene |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather
 than exact draws, so they remain deterministic enough for CI.
+
+The LLM suites use `FakeLlmClient` and a fake clock. CI never calls a provider and needs no API
+key; see [llm-policies.md](llm-policies.md).
 
 ## CI execution
 
