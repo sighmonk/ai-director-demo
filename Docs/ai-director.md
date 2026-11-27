@@ -121,6 +121,7 @@ which keeps arm A behaviour unchanged.
 | `SpawnHealthPack` | Benefit | Spawns a health pack on a reachable floor tile near the player, preferring tiles outside enemy aggro range | 10 | 1 | 5 s |
 | `AddRewardRoom` | Benefit | Opens a small room next to an existing corridor or room and places one health pack in its centre | 10 | 1.5 | 20 s |
 | `AddThreatRoom` | Negative | Opens the same kind of room and spawns `EnemiesPerRoom` enemies on its floor tiles | 10 | 1.5 | 20 s |
+| `ClosePassage` | Negative | Seals one corridor passage for `ReopenAfterSeconds`, never disconnecting the dungeon | 10 | 1 | 30 s |
 
 `Cost`, `Weight` and `Cooldown` are exported on every action node, so they can be tuned per action
 in `Director.tscn`. Spawn-rate multipliers decay back to `1.0` at `0.1` per second and are clamped
@@ -162,6 +163,26 @@ carved.
 `MaxRoomsAddedPerSession`, `RoomSideMin`, `RoomSideMax`, `MinDistanceFromPlayer` and
 `MaxCandidateAttempts` are exported on the actions; `EnemiesPerRoom` is exported on
 `AddThreatRoom`.
+
+### Closing a passage
+
+`ClosePassage` is the challenge counterpart: it writes walls across one corridor cross-section and
+optionally restores the exact tiles later.
+
+- **Candidate filtering** — `DungeonMutator.GetClosablePassages(avoidPlayerRoom,
+  avoidStrandingEnemies)` starts from the model's closable passages and then uses
+  `DungeonPassageSelection` to drop the exits of the room the player is standing in and any passage
+  whose closure would leave a living enemy unreachable from the player.
+- **Safety** — `DungeonWorldModel.TryClosePassage` verifies that the player and every room centre
+  stay reachable before the first tile is written, so a rejected closure leaves the tilemaps, the
+  A* grid and the model untouched.
+- **Reopen** — when `ReopenAfterSeconds` is positive, a one-shot timer calls
+  `DungeonMutator.ReopenPassage`, which restores the stored tiles and refreshes both tilemaps and
+  navigation. `MaxClosuresPerSession` limits how often the action may fire.
+- **Telemetry** — `DungeonPassageClosed(passageId, tileCount, closedAt, reopenAt)` and
+  `DungeonPassageReopened(passageId, tileCount, reopenedAt)` use the session clock.
+- **Selection** — `SelectionSeed` makes the passage pick reproducible; `0` always takes the first
+  candidate.
 
 ## Tuning parameters
 

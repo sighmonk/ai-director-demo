@@ -49,7 +49,7 @@ that reaches for another singleton.
 
 | Manager | Responsibilities | Key API |
 | --- | --- | --- |
-| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `HealthPackSpawned`, `HealthPackCollected`, `DungeonChanged`, `DungeonRoomCreated`, `PerformanceMetricsUpdated`, … |
+| `SignalManager` | Central event hub. Declares all gameplay and debug signals. | `EnemyKilled`, `PlayerTookDamage`, `WeaponFired`, `HealthPackSpawned`, `HealthPackCollected`, `DungeonChanged`, `DungeonRoomCreated`, `DungeonPassageClosed`, `DungeonPassageReopened`, `PerformanceMetricsUpdated`, … |
 | `DataManager` | Subscribes to gameplay signals, owns `DirectorData`, syncs player health, tracks spawned/living difficulty value. | `RegisterDirectorData`, `RegisterPlayer`, `RegisterEnemySpawn`, `RegisterDirectorSpawn`, `RegisterEnemyDeath` |
 | `EnemyManager` | Spawns enemies on a timer, keeps the active enemy list, builds an `AStarGrid2D` from the world tilemap, answers floor/reachability queries and applies Director buffs/debuffs or spawn-rate changes. | `SetWorldTileMap`, `GetPath`, `IsFloorTile`, `IsFloorReachable`, `TryGetRandomFloorTileNear`, `SpawnEnemyAt`, `RebuildNavigation`, `ModifySpawnRate`, `BuffAllEnemies`, `DebuffAllEnemies`, `ForceSpawnEnemy`, `ActiveEnemies` |
 | `GameManager` | Session clock, session progress, current difficulty from `DifficultyCurve`, player and dungeon registration, debug toggles. | `SessionTime`, `SessionProgress`, `CurrentDifficulty`, `RegisterPlayer`, `RegisterDungeon`, `Dungeon` |

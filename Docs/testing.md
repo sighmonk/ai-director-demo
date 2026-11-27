@@ -30,7 +30,7 @@ dotnet test "project kitchen.sln" --settings .runsettings
 
 ## Test suites
 
-All tests live in `Tests/` and total **155 tests**.
+All tests live in `Tests/` and total **162 tests**.
 
 | Suite | Tests | Coverage |
 | --- | --- | --- |
@@ -51,6 +51,8 @@ All tests live in `Tests/` and total **155 tests**.
 | `DungeonWorldModelTest` | 12 | Room creation rejection paths, passage close/reopen, rollback, determinism |
 | `DungeonRoomPlacementTest` | 5 | Runtime room candidates: adjacency, free space, player distance, bounds, determinism |
 | `AddRoomActionTest` | 4 | Reward/threat room action wiring, defaults and the session limit |
+| `DungeonPassageSelectionTest` | 4 | Player-room exit exclusion, enemy stranding, alternate routes |
+| `ClosePassageActionTest` | 3 | Close-passage wiring, defaults and the session limit |
 | `DungeonMutatorWiringTest` | 1 | Mutator node present in the dungeon scene |
 
 The weighted-selection tests are statistical: they assert broad distribution properties rather
